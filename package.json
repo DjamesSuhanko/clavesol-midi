@@ -7,8 +7,9 @@
   },
   "scripts": {
     "setup": "npm ci --prefix vendor/spessasynth",
-    "start": "SPESSASYNTH_HOST=127.0.0.1 SPESSASYNTH_AUTO_UPDATE=0 npm start --prefix vendor/spessasynth",
+    "start": "node scripts/start.mjs",
     "build": "npm run build --prefix vendor/spessasynth",
-    "test": "npm run test:types --prefix vendor/spessasynth"
+    "test": "npm run test:types --prefix vendor/spessasynth && npm run test:midi",
+    "test:midi": "node --test tests/midi-source.test.mjs"
   }
 }

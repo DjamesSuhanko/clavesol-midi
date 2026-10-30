@@ -1,6 +1,10 @@
-# Clave Sol MIDI — Etapas 1 e 2
+# Clave Sol MIDI — Etapas 1, 2 e 3A
 
 SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Sem catálogo. Veja ETAPA-2.md para alterações e validação visual.
+
+## MIDI externo — Etapa 3A
+
+A coleção externa está configurada em `.env.local`. Execute `npm start`, abra http://localhost:8181 e clique **Ouvir música de teste** para carregar `Borodin/bor_ps2.mid` sem upload. Consulte `ETAPA-3A.md` para configuração, segurança, testes e troca de coleção. Nenhum arquivo da coleção foi copiado para o projeto.
 
 ## Versão e requisitos
 
@@ -33,7 +37,7 @@ curl -fsS http://localhost:8181/getversion
 curl -fsS http://localhost:8181/soundfonts
 ```
 
-`npm test` executa o script oficial `test:types` (ESLint e TypeScript); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` já inclui esse mesmo teste, portanto não é preciso repeti-lo depois de um build bem-sucedido.
+`npm test` executa o script oficial `test:types` (ESLint e TypeScript) e os seis testes da integração MIDI (`npm run test:midi`); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` inclui a verificação estática oficial. Os testes da rota externa são executados separadamente por `npm run test:midi`.
 
 Resultados nesta entrega:
 - `npm ci`: sucesso, 163 pacotes instalados, zero vulnerabilidades reportadas pelo npm.

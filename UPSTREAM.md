@@ -21,3 +21,7 @@ GeneralUserGS.sf3 é a SoundFont original incluída no aplicativo, de S. Christi
 ## Manutenção futura
 
 Edite os fontes em vendor/spessasynth/src e compile novamente. Para atualizar o fornecedor, compare com o commit registrado e preserve/reavalie as duas opções do servidor. Não use o atualizador binário da edição local neste checkout de desenvolvimento.
+
+## Etapa 3A
+
+Checkpoint da Etapa 2: `69caf7f`. A ponte local de MIDI externo está documentada em ETAPA-3A.md. Ela acrescenta uma rota restrita ao servidor e reutiliza startMidi/Manager.play com um File; não altera sintetizador, sequenciador ou renderer. Dependências preservadas.

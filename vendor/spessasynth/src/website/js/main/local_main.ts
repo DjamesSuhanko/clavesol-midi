@@ -1,3 +1,4 @@
+import { installMidiTestButton } from "./midi_test_button.ts";
 import type { MIDIFile } from "../utils/drop_file_handler.ts";
 import { Manager } from "../manager/manager.js";
 import { showNotification } from "../notification/notification.js";
@@ -132,7 +133,7 @@ async function fetchFont(
     return dataArray.buffer;
 }
 
-async function startMidi(midiFiles: FileList) {
+async function startMidi(midiFiles: FileList | File[]) {
     if (!synthReady || !window.manager) {
         setTimeout(() => void startMidi(midiFiles), 100);
         return;
@@ -306,3 +307,15 @@ exportButton.addEventListener("click", () => {
         window.manager.showExportMenu();
     }
 });
+
+// Clave Sol: reuse the original loader and activate audio from the button gesture.
+installMidiTestButton(
+    async (file) => { await startMidi([file]); },
+    async () => {
+        await context.resume();
+        // The upstream initializer uses document.onclick; avoid a second initialization.
+        // eslint-disable-next-line unicorn/prefer-add-event-listener
+        document.onclick = null;
+        if (!synthReady) await initManagerSF();
+    }
+);

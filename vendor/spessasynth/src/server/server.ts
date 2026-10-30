@@ -1,4 +1,5 @@
 import http from "node:http";
+import { createMidiRoute } from "./midi_source.ts";
 import path from "node:path";
 import {
     getVersion,
@@ -30,10 +31,13 @@ if (process.env.SPESSASYNTH_AUTO_UPDATE !== "0") {
 
 const configManager = await LocalEditionConfig.initialize();
 
+const midiRoute = createMidiRoute(process.env.MIDI_SOURCE_DIR, process.env.MIDI_TEST_FILE);
+
 const server = http.createServer(async (req, res) => {
     if (!req.url) {
         return;
     }
+    if (await midiRoute(req, res)) return;
     switch (req.url.split("?")[0]) {
         default: {
             serveStaticFile(

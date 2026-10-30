@@ -27,3 +27,19 @@
 :root[data-theme^="clavesol_"] #note_progress_background {
     font-variant-numeric: tabular-nums;
 }
+
+/* Local MIDI demonstration; uses the current theme without changing the player. */
+.clavesol_midi_test { margin: 0.35rem 0; }
+#midi_test_button {
+    background: var(--top-buttons-color);
+    color: var(--font-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--primary-border-radius);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+#midi_test_button:hover { background: var(--track-color); }
+#midi_test_button:disabled { opacity: 0.6; cursor: wait; }
+#midi_test_status { font-size: 0.8rem; overflow-wrap: anywhere; max-width: 32rem; }
+#midi_test_status:empty { display: none; }
