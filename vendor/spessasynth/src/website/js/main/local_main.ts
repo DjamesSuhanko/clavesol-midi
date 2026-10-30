@@ -1,3 +1,4 @@
+import { installMidiLibrary } from "./midi_library.ts";
 import { installMidiTestButton } from "./midi_test_button.ts";
 import type { MIDIFile } from "../utils/drop_file_handler.ts";
 import { Manager } from "../manager/manager.js";
@@ -308,14 +309,13 @@ exportButton.addEventListener("click", () => {
     }
 });
 
-// Clave Sol: reuse the original loader and activate audio from the button gesture.
-installMidiTestButton(
-    async (file) => { await startMidi([file]); },
-    async () => {
-        await context.resume();
-        // The upstream initializer uses document.onclick; avoid a second initialization.
-        // eslint-disable-next-line unicorn/prefer-add-event-listener
-        document.onclick = null;
-        if (!synthReady) await initManagerSF();
-    }
-);
+// Shared native loader/activation for the test button and sample library.
+const loadExternalMidi = async (file: File) => { await startMidi([file]); };
+const prepareExternalMidi = async () => {
+    await context.resume();
+    // eslint-disable-next-line unicorn/prefer-add-event-listener
+    document.onclick = null;
+    if (!synthReady) await initManagerSF();
+};
+installMidiTestButton(loadExternalMidi, prepareExternalMidi);
+installMidiLibrary(loadExternalMidi, prepareExternalMidi);

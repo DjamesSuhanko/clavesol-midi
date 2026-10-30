@@ -1,6 +1,10 @@
-# Clave Sol MIDI — Etapas 1, 2 e 3A
+# Clave Sol MIDI — Etapas 1, 2, 3A e 3B
 
-SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Sem catálogo. Veja ETAPA-2.md para alterações e validação visual.
+SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Biblioteca inicial com 18 músicas de 18 compositores. Veja ETAPA-2.md para os temas e ETAPA-3B.md para a biblioteca.
+
+## Biblioteca inicial — Etapa 3B
+
+Execute `npm start` e abra **Biblioteca de músicas**. Pesquise na amostra por título/compositor e use **Ouvir** ou **Baixar MIDI**. O painel pode ser recolhido sem recarregar o player. A configuração da fonte continua em `.env.local`; o índice fixo está em `vendor/spessasynth/library-sample.json`. Consulte `ETAPA-3B.md` e `PROGRESSO.md` para funcionamento e estado final.
 
 ## MIDI externo — Etapa 3A
 
@@ -37,9 +41,9 @@ curl -fsS http://localhost:8181/getversion
 curl -fsS http://localhost:8181/soundfonts
 ```
 
-`npm test` executa o script oficial `test:types` (ESLint e TypeScript) e os seis testes da integração MIDI (`npm run test:midi`); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` inclui a verificação estática oficial. Os testes da rota externa são executados separadamente por `npm run test:midi`.
+`npm test` executa o script oficial `test:types` (ESLint e TypeScript) e oito testes: seis da integração MIDI (`npm run test:midi`) e dois da biblioteca (`npm run test:library`); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` inclui a verificação estática oficial. Os testes da rota externa são executados separadamente por `npm run test:midi`.
 
-Resultados nesta entrega:
+Resultados históricos da Etapa 1 (para a validação atual, consulte PROGRESSO.md):
 - `npm ci`: sucesso, 163 pacotes instalados, zero vulnerabilidades reportadas pelo npm.
 - Build oficial completo: sucesso; ESLint e TypeScript passaram. Bundles grandes geraram avisos informativos de tamanho, sem falha.
 - HTTP: versão 4.4.0, listagem de GeneralUserGS.sf3 e AudioWorklet com resposta 200.
@@ -67,4 +71,4 @@ Não é necessário aguardar os 2min33s da música para validar a demonstração
 - `.nvmrc`, `.gitignore`, `UPSTREAM.md` e este README.
 - Gerados localmente, ignorados pelo Git: `vendor/spessasynth/node_modules/`, `dist/`, `local-dev/`, `server/` e caches de compilação. O `server/config.json` contém preferências locais.
 
-A licença e atribuições originais permanecem em `vendor/spessasynth/LICENSE`, README e fontes. Consulte `UPSTREAM.md` para procedência e as duas adaptações de execução do servidor. O repositório Clave Sol e seus templates não foram modificados. Não houve publicação, configuração de domínio ou implementação de catálogo.
+A licença e atribuições originais permanecem em `vendor/spessasynth/LICENSE`, README e fontes. Consulte `UPSTREAM.md` para procedência e as duas adaptações de execução do servidor. O repositório Clave Sol e seus templates não foram modificados. Não houve publicação ou configuração de domínio. A biblioteca está limitada à amostra da Etapa 3B, sem catálogo completo.

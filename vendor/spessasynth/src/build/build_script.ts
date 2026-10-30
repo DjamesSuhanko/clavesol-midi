@@ -206,6 +206,8 @@ export async function buildSpessaSynth() {
     await copyFileToZip(path.resolve(REPO_ROOT, "package.json"), zip);
     await copyFileToZip(path.resolve(REPO_ROOT, "README.md"), zip);
     await copyFileToZip(path.resolve(REPO_ROOT, "LICENSE"), zip);
+    // Clave Sol sample metadata for the local server; MIDI originals stay external.
+    await copyFileToZip(path.resolve(REPO_ROOT, "library-sample.json"), zip);
     await copyFileToZip(path.resolve(REPO_ROOT, "Open SpessaSynth.bat"), zip);
 
     // Copy the sf folder

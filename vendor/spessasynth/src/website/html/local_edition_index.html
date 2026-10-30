@@ -93,6 +93,7 @@
                         </h1></noscript
                     >
                     <div class="clavesol_midi_test">
+                        <button id="library_toggle" type="button" aria-expanded="false" aria-controls="midi_library">Biblioteca de músicas</button>
                         <button id="midi_test_button" type="button" disabled>Ouvir música de teste</button>
                         <p id="midi_test_status" role="status" aria-live="polite"></p>
                     </div>
@@ -266,5 +267,14 @@
         </div>
         <script src="./local_main.js" type="module"></script>
         <!-- Here the magic happens ;) -->
+        <aside id="midi_library" hidden aria-label="Biblioteca de músicas">
+            <div class="library_heading"><h2>Biblioteca de músicas</h2><button id="library_close" type="button">Fechar biblioteca</button></div>
+            <p>Amostra de música clássica</p>
+            <label for="library_search">Pesquisar título ou compositor</label>
+            <input id="library_search" type="search" placeholder="Título ou compositor" autocomplete="off" />
+            <p id="library_count" aria-live="polite"></p>
+            <p id="library_status" role="status"></p>
+            <ul id="library_list"></ul>
+        </aside>
     </body>
 </html>

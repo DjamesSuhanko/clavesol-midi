@@ -43,3 +43,30 @@
 #midi_test_button:disabled { opacity: 0.6; cursor: wait; }
 #midi_test_status { font-size: 0.8rem; overflow-wrap: anywhere; max-width: 32rem; }
 #midi_test_status:empty { display: none; }
+
+/* Sample library: overlay leaves the original player layout and playback intact. */
+#library_toggle, #midi_library button, #midi_library a {
+    background: var(--top-buttons-color); color: var(--font-color);
+    border: 1px solid var(--border-color); border-radius: 4px;
+    padding: 0.45rem 0.7rem; font-size: 0.9rem; cursor: pointer;
+}
+#midi_library[hidden] { display: none; }
+#midi_library {
+    position: fixed; inset: 0 0 0 auto; z-index: calc(var(--top-index) + 1);
+    width: min(400px, 100%); padding: 1rem; overflow-y: auto;
+    background: var(--top-color-start); border-left: 1px solid var(--edge-color);
+    box-shadow: -6px 0 20px var(--settings-shadow-color);
+}
+#midi_library * { text-align: left; }
+.library_heading { display: flex; align-items: center; gap: 0.5rem; justify-content: space-between; }
+.library_heading h2 { font-size: 1.5rem; }
+#midi_library label { display: block; margin-top: 1rem; font-size: 0.9rem; }
+#library_search { width: 100%; padding: 0.65rem; margin: 0.35rem 0; background: var(--top-buttons-color-start); border: 1px solid var(--edge-color); border-radius: 4px; }
+#library_list { list-style: none; padding: 0; }
+#library_list li { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 1rem 0; border-bottom: 1px solid var(--edge-color); }
+#library_list strong, #library_list span { grid-column: 1 / -1; overflow-wrap: anywhere; }
+#library_list span, #library_count, #library_status { font-size: 0.85rem; }
+#library_status { overflow-wrap: anywhere; }
+#midi_library button:hover, #midi_library a:hover, #library_toggle:hover { background: var(--track-color); }
+#midi_library button:disabled { opacity: 0.6; cursor: wait; }
+@media (max-width: 700px) { #midi_library { width: 100%; } }

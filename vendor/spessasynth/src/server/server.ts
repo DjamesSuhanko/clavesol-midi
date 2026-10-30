@@ -1,3 +1,5 @@
+import fs from "node:fs/promises";
+import { createLibraryRoute, type LibraryEntry } from "./midi_library.ts";
 import http from "node:http";
 import { createMidiRoute } from "./midi_source.ts";
 import path from "node:path";
@@ -33,11 +35,15 @@ const configManager = await LocalEditionConfig.initialize();
 
 const midiRoute = createMidiRoute(process.env.MIDI_SOURCE_DIR, process.env.MIDI_TEST_FILE);
 
+const sample = JSON.parse(await fs.readFile(path.join(rootDir, "library-sample.json"), "utf-8")) as LibraryEntry[];
+const libraryRoute = createLibraryRoute(process.env.MIDI_SOURCE_DIR, sample);
+
 const server = http.createServer(async (req, res) => {
     if (!req.url) {
         return;
     }
     if (await midiRoute(req, res)) return;
+    if (await libraryRoute(req, res)) return;
     switch (req.url.split("?")[0]) {
         default: {
             serveStaticFile(

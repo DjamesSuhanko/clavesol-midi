@@ -1,0 +1,31 @@
+# Etapa 3B — concluída
+
+## Estado final — retomada em 30/10/2026
+
+- Partes 1–6 concluídas: índice de 18 músicas/18 compositores, painel recolhível, Ouvir, download original, pesquisa e testes.
+- `npm test`: aprovado (ESLint, TypeScript e 8 testes Node).
+- `npm run build`: aprovado; somente avisos informativos de tamanho dos bundles.
+- `git diff --check`: aprovado.
+- Usuário confirmou no navegador: lista, pesquisa, seleção correta, animação e download preservando nome. Não repetidos na retomada.
+- Abertura/fechamento revisados no código: alteram visibilidade/foco, sem chamadas de reprodução. Não foi feito novo teste visual dessa interação.
+- Documentação final: ETAPA-3B.md, README.md e UPSTREAM.md.
+- Nenhuma correção funcional necessária nesta retomada; implementação e dependências preservadas.
+- Nenhum problema bloqueante identificado. Sem publicação, alterações nos MIDIs originais ou avanço para a Etapa 4.
+- Para executar: `npm start` na raiz, abrir http://localhost:8181 e clicar Biblioteca de músicas.
+- Estado final preservado no commit local com mensagem `Conclui etapa 3B: biblioteca de amostra validada`.
+
+## Histórico incremental (registros anteriores à conclusão)
+
+- Checkpoint da Etapa 3A criado antes das alterações.
+- Em andamento: índice de 18 MIDIs, distribuídos por compositor, sem copiar originais.
+- Pendentes: painel, Ouvir, download, pesquisa e testes.
+- Não iniciar Etapa 4.
+
+## Parte 1 concluída
+Índice `vendor/spessasynth/library-sample.json`: 18 MIDIs de 18 compositores. Busca interrompida na amostra, arquivos validados com readMidi, originais intactos. Checkpoint: `0a4d9fa`.
+
+## Partes 2–5 implementadas (aguardando validação)
+Painel recolhível com 18 músicas, pesquisa local por título/compositor, Ouvir pelo mesmo startMidi da 3A e download por ID. Rota reutiliza readMidi, com revalidação de links/caminhos a cada leitura. Sem varreduras no carregamento da página. Falta executar testes/build e verificar no navegador.
+
+## Parte 6 — testes automatizados concluídos
+Build oficial (ESLint/TypeScript incluídos) aprovado. 8 testes Node aprovados: 6 herdados da 3A e 2 da biblioteca, abrangendo índice, HTTP, bytes originais, download, IDs desconhecidos, parâmetros manipulados e symlink externo. Falta validação breve no navegador e documentação final.

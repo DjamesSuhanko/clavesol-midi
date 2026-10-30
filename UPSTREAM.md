@@ -25,3 +25,7 @@ Edite os fontes em vendor/spessasynth/src e compile novamente. Para atualizar o 
 ## Etapa 3A
 
 Checkpoint da Etapa 2: `69caf7f`. A ponte local de MIDI externo está documentada em ETAPA-3A.md. Ela acrescenta uma rota restrita ao servidor e reutiliza startMidi/Manager.play com um File; não altera sintetizador, sequenciador ou renderer. Dependências preservadas.
+
+## Etapa 3B
+
+Checkpoint anterior: `0a4d9fa`. Índice JSON de 18 entradas, módulo de rotas locais por ID reutilizando readMidi e painel independente que reutiliza startMidi/Manager.play. Integrações no servidor, HTML, CSS, entrada local e empacotamento do índice. Consulte ETAPA-3B.md para a lista de arquivos. Nenhuma alteração no núcleo do sintetizador/renderer ou nas dependências.

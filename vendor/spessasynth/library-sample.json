@@ -1,0 +1,110 @@
+[
+  {
+    "id": "m01",
+    "title": "bor ps2",
+    "composer": "Borodin",
+    "relativePath": "Borodin/bor_ps2.mid"
+  },
+  {
+    "id": "m02",
+    "title": "schuim 2",
+    "composer": "Schubert",
+    "relativePath": "Schubert/schuim-2.mid"
+  },
+  {
+    "id": "m03",
+    "title": "mz 332 2",
+    "composer": "Mozart",
+    "relativePath": "Mozart/mz_332_2.mid"
+  },
+  {
+    "id": "m04",
+    "title": "debussy cc 2",
+    "composer": "Debussy",
+    "relativePath": "Debussy/debussy_cc_2.mid"
+  },
+  {
+    "id": "m05",
+    "title": "br im2",
+    "composer": "Brahms",
+    "relativePath": "Brahms/br_im2.mid"
+  },
+  {
+    "id": "m06",
+    "title": "god chpn op10 e01",
+    "composer": "Godowsky",
+    "relativePath": "Godowsky/god_chpn_op10_e01.mid"
+  },
+  {
+    "id": "m07",
+    "title": "muss 2",
+    "composer": "Mussorgsky",
+    "relativePath": "Mussorgsky/muss_2.mid"
+  },
+  {
+    "id": "m08",
+    "title": "bach 846",
+    "composer": "Bach",
+    "relativePath": "Bach/bach_846.mid"
+  },
+  {
+    "id": "m09",
+    "title": "beethoven opus90 2",
+    "composer": "Beethoven",
+    "relativePath": "Beethoven/beethoven_opus90_2.mid"
+  },
+  {
+    "id": "m10",
+    "title": "alb esp3",
+    "composer": "Albeniz",
+    "relativePath": "Albeniz/alb_esp3.mid"
+  },
+  {
+    "id": "m11",
+    "title": "liz liebestraum",
+    "composer": "Liszt",
+    "relativePath": "Liszt/liz_liebestraum.mid"
+  },
+  {
+    "id": "m12",
+    "title": "haydn 35 3",
+    "composer": "Haydn",
+    "relativePath": "Haydn/haydn_35_3.mid"
+  },
+  {
+    "id": "m13",
+    "title": "ty november",
+    "composer": "Tchaikovsky",
+    "relativePath": "Tchaikovsky/ty_november.mid"
+  },
+  {
+    "id": "m14",
+    "title": "grieg berceuse",
+    "composer": "Grieg",
+    "relativePath": "Grieg/grieg_berceuse.mid"
+  },
+  {
+    "id": "m15",
+    "title": "clementi opus36 3 1",
+    "composer": "Clementi",
+    "relativePath": "Clementi/clementi_opus36_3_1.mid"
+  },
+  {
+    "id": "m16",
+    "title": "fruehlingsrauschen",
+    "composer": "Sinding",
+    "relativePath": "Sinding/fruehlingsrauschen.mid"
+  },
+  {
+    "id": "m17",
+    "title": "mendel op30 2",
+    "composer": "Mendelssohn",
+    "relativePath": "Mendelssohn/mendel_op30_2.mid"
+  },
+  {
+    "id": "m18",
+    "title": "burg erwachen",
+    "composer": "Burgmueller",
+    "relativePath": "Burgmueller/burg_erwachen.mid"
+  }
+]

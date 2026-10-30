@@ -9,7 +9,8 @@
     "setup": "npm ci --prefix vendor/spessasynth",
     "start": "node scripts/start.mjs",
     "build": "npm run build --prefix vendor/spessasynth",
-    "test": "npm run test:types --prefix vendor/spessasynth && npm run test:midi",
-    "test:midi": "node --test tests/midi-source.test.mjs"
+    "test": "npm run test:types --prefix vendor/spessasynth && npm run test:midi && npm run test:library",
+    "test:midi": "node --test tests/midi-source.test.mjs",
+    "test:library": "node --test tests/library.test.mjs"
   }
 }
