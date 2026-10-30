@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "collectionId": "infantil",
+  "totalSongs": 71,
+  "composerCount": 2,
+  "filesByComposer": {
+    "Brasil": 10,
+    "World": 61
+  },
+  "unidentifiedComposerSongs": 0,
+  "totalSizeBytes": 643711,
+  "ignoredSymlinks": 0
+}

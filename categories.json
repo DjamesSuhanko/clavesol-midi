@@ -1,3 +1,4 @@
 [
-  { "id": "classic", "name": "Clássicas", "enabled": true }
+  { "id": "classic", "name": "Clássicas", "enabled": true },
+  { "id": "infantil","name": "Infantil",  "enabled": true }
 ]
