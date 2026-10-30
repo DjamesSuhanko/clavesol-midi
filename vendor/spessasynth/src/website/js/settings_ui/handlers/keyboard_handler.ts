@@ -1,0 +1,233 @@
+import type { SpessaSynthSettings } from "../settings.ts";
+import type { MIDIPatch, MIDIPatchFull } from "spessasynth_core";
+
+export const USE_MIDI_RANGE = "midi range";
+
+/**
+ * The channel colors are taken from synthui
+ */
+export function _createKeyboardHandler(this: SpessaSynthSettings) {
+    let channelNumber = 0;
+
+    const keyboardControls = this.htmlControls.keyboard;
+
+    const nameDisplays: HTMLParagraphElement[] = [];
+
+    const channelTrackers: MIDIPatch[] = [];
+
+    let presetList: MIDIPatchFull[] = [];
+
+    const updateChannel = (channel: number) => {
+        const c = channelTrackers[channel];
+        const preset = presetList.find(
+            (p) =>
+                p.bankMSB === c.bankMSB &&
+                p.program === c.program &&
+                p.bankLSB === c.bankLSB &&
+                p.isGMGSDrum === c.isGMGSDrum
+        );
+        // https://github.com/spessasus/SpessaSynth/issues/219
+        nameDisplays[channel].textContent = ": " + (preset?.name ?? "UNKNOWN");
+    };
+
+    const updateChannels = () => {
+        for (let channel = 0; channel < nameDisplays.length; channel++) {
+            updateChannel(channel);
+        }
+    };
+
+    const createChannel = () => {
+        const option = document.createElement("option");
+
+        option.value = channelNumber.toString();
+        const channelDisplay = document.createElement("p");
+        // Channel: {0} gets formatted to channel number
+        this.locale.bindObjectProperty(
+            channelDisplay,
+            "textContent",
+            "locale.settings.keyboardSettings.selectedChannel.channelOption",
+            [channelNumber + 1]
+        );
+
+        const nameDisplay = document.createElement("p");
+        nameDisplay.textContent = ": UNKNOWN";
+        nameDisplays.push(nameDisplay);
+        channelTrackers.push({
+            program: 0,
+            bankMSB: 0,
+            bankLSB: 0,
+            isGMGSDrum: channelNumber % 16 === 9
+        });
+        updateChannels();
+
+        option.append(channelDisplay);
+        option.append(nameDisplay);
+        option.style.background =
+            this.synthui.channelColors[
+                channelNumber % this.synthui.channelColors.length
+            ];
+        option.style.color = "rgb(0, 0, 0)";
+
+        keyboardControls.selectedChannel.append(option);
+        channelNumber++;
+    };
+
+    const setPresetList = (list: MIDIPatchFull[]) => {
+        presetList = list.map((p) => ({
+            ...p,
+            name: p.name.replace(/\d{3}:\d{3}/, "") // Remove those pesky "000:001"
+        }));
+        updateChannels();
+    };
+    this.synth.eventHandler.addEvent(
+        "presetListChange",
+        "settings-preset-list-change",
+        setPresetList
+    );
+    if (this.synth.presetList.length > 0) {
+        setPresetList(this.synth.presetList);
+    }
+    this.synth.eventHandler.addEvent(
+        "programChange",
+        "settings-program-change",
+        (e) => {
+            const c = channelTrackers[e.channel];
+            c.bankLSB = e.bankLSB;
+            c.bankMSB = e.bankMSB;
+            c.program = e.program;
+            c.isGMGSDrum = e.isGMGSDrum;
+            updateChannel(e.channel);
+        }
+    );
+
+    // Create the initial synth channels
+    for (const item of this.synth.midiChannels) {
+        // Apparently this is better off as a for-of loop even though we don't use the item
+        // Sure, eslint, whatever you say.
+        void item;
+        createChannel();
+    }
+    keyboardControls.selectedChannel.addEventListener("change", () => {
+        this.midiKeyboard.selectChannel(
+            Number.parseInt(keyboardControls.selectedChannel.value)
+        );
+    });
+
+    keyboardControls.keyRange.addEventListener("change", () => {
+        if (this.musicMode.visible) {
+            this.musicMode.setVisibility(
+                false,
+                document.querySelector("#keyboard_canvas_wrapper")!
+            );
+            setTimeout(() => {
+                if (keyboardControls.keyRange.value === USE_MIDI_RANGE) {
+                    this.autoKeyRange = true;
+                    if (this?.seq?.midiData) {
+                        this.renderer.keyRange = this.seq.midiData.keyRange;
+                    }
+                } else {
+                    this.autoKeyRange = false;
+                    this.renderer.keyRange =
+                        this.keyboardSizes[
+                            keyboardControls.keyRange
+                                .value as keyof typeof this.keyboardSizes
+                        ];
+                }
+                this.saveSettings();
+            }, 600);
+            return;
+        }
+        if (keyboardControls.keyRange.value === USE_MIDI_RANGE) {
+            this.autoKeyRange = true;
+            if (this?.seq.midiData) {
+                this.renderer.keyRange = this.seq.midiData.keyRange;
+            }
+        } else {
+            this.autoKeyRange = false;
+            this.renderer.keyRange =
+                this.keyboardSizes[
+                    keyboardControls.keyRange
+                        .value as keyof typeof this.keyboardSizes
+                ];
+        }
+        this.saveSettings();
+    });
+
+    this.seq.eventHandler.addEvent(
+        "songChange",
+        "settings-keyboard-handler-song-change",
+        (e) => {
+            const { midiData } = e;
+            if (this.autoKeyRange) {
+                this.renderer.keyRange = midiData.keyRange;
+            }
+            if (
+                midiData.rmidiInfo?.picture !== undefined && // Switch to music mode if picture available
+                !this.musicMode.visible
+            ) {
+                this.toggleMusicPlayerMode();
+            }
+        }
+    );
+
+    // Listen for new channels
+    this.synth.eventHandler.addEvent(
+        "channelAdded",
+        "settings-new-channel",
+        () => {
+            createChannel();
+        }
+    );
+
+    // QoL: change selected channel if the given channel is muted
+    this.synthui.onMute.push((channel, isMuted) => {
+        if (isMuted && channel === this.midiKeyboard.channel) {
+            // Find the first non-selected channel
+            let channelNumber = 0;
+            while (
+                this.synth.midiChannels[channelNumber].systemParameters.isMuted
+            ) {
+                channelNumber++;
+                if (this.synth.midiChannels[channelNumber] === undefined) {
+                    return;
+                }
+            }
+            if (channelNumber < this.synth.midiChannels.length) {
+                this.midiKeyboard.selectChannel(channelNumber);
+                keyboardControls.selectedChannel.value =
+                    channelNumber.toString();
+            }
+        }
+    });
+
+    // Dark mode toggle
+    keyboardControls.mode.addEventListener("click", () => {
+        if (this.musicMode.visible) {
+            this.musicMode.setVisibility(
+                false,
+                document.querySelector("#keyboard_canvas_wrapper")!
+            );
+            setTimeout(() => {
+                this.midiKeyboard.toggleMode();
+                this.saveSettings();
+                this.renderer.updateSize();
+            }, 600);
+            return;
+        }
+        this.midiKeyboard.toggleMode();
+        this.saveSettings();
+    });
+
+    // Keyboard show toggle
+    keyboardControls.shown.addEventListener("click", () => {
+        this.midiKeyboard.shown = !this.midiKeyboard.shown;
+        this.saveSettings();
+    });
+
+    // Keyboard max velocity
+    keyboardControls.forceMaxVelocity.addEventListener("click", () => {
+        this.midiKeyboard.forceMaxVelocity =
+            !this.midiKeyboard.forceMaxVelocity;
+        this.saveSettings();
+    });
+}

@@ -1,0 +1,264 @@
+/**
+ * Settings_html.js
+ * purpose: the inner HTML for the settings element
+ */
+import { USE_MIDI_RANGE } from "./handlers/keyboard_handler.js";
+
+import { rendererModes } from "../renderer/base/renderer_modes.ts";
+
+// Translate-path: only innerText: translate-path-title: inner text by adding .title and title by adding .description
+export const settingsHtml = `
+<div class='settings_header'>
+    <h1 translate-path='locale.settings.mainTitle'></h1>
+    <input type='search' id='settings_search' class='settings_search' autocomplete='off' translate-path-placeholder='locale.settings.searchPlaceholder'>
+</div>
+<p class='settings_no_results hidden' translate-path='locale.settings.noResults'></p>
+<div class='settings_groups_parent'>
+    <div class='settings_group'>
+        <h2 translate-path='locale.settings.rendererSettings.title'></h2>
+        
+        <div class='setting setting_select'>
+        <label for='renderer_mode_selector' translate-path-title='locale.settings.rendererSettings.mode'></label>
+        <select id='renderer_mode_selector'>
+            <option value='${rendererModes.waveformsMode}' translate-path='locale.settings.rendererSettings.mode.waveforms'></option>
+            <option value='${rendererModes.filledWaveformsMode}' translate-path='locale.settings.rendererSettings.mode.filledWaveforms'></option>
+            <option value='${rendererModes.spectrumSplitMode}' translate-path='locale.settings.rendererSettings.mode.spectrumSplit'></option>
+            <option value='${rendererModes.spectrumSingleMode}' translate-path='locale.settings.rendererSettings.mode.spectrum'></option>
+            <option value='${rendererModes.none}' translate-path='locale.none'></option>
+        </select>
+        </div>
+        
+        <div class='setting setting_slider_row'><label translate-path-title='locale.settings.rendererSettings.noteFallingTime'></label>
+        <spessarange min='1' max='9999' value='1000' class='settings_slider' input_id='note_time_slider' units='ms'></spessarange>
+        </div>
+        
+        <div class='setting setting_slider_row'><label translate-path-title='locale.settings.rendererSettings.noteAfterTriggerTime'></label>
+        <spessarange min='0' max='9999' value='0' class='settings_slider' input_id='note_after_time_slider' units='ms'></spessarange>
+        </div>
+        
+        <div id='renderer_analyser_settings'>
+            <div class='setting setting_slider_row'>
+            <label
+            translate-path-title='locale.settings.rendererSettings.waveformSampleSize'></label>
+            <spessarange min='5' max='15' value='10' class='settings_slider' input_id='analyser_fft_slider' units=''></spessarange>
+            </div>
+            
+            <div class='setting setting_slider_row'>
+            <label translate-path-title='locale.settings.rendererSettings.waveformAmplifier'></label>
+            <spessarange min='-10' max='10' value='2' class='settings_slider' input_id='wave_multiplier_slider' units=''></spessarange>
+            </div>
+        </div>
+        
+        <div id='renderer_waveform_settings'>
+        <div class='setting setting_slider_row'>
+            <label translate-path-title='locale.settings.rendererSettings.waveformThickness'></label>
+            <spessarange min='0' max='10' value='2' class='settings_slider' input_id='analyser_thickness_slider' units='px'></spessarange>
+            </div>
+            <div class='switch_label setting'>
+                <label for='stabilize_waveforms_toggler' translate-path-title='locale.settings.rendererSettings.toggleStabilizeWaveforms'></label>
+                <label class='switch'>
+                    <input type='checkbox' checked id='stabilize_waveforms_toggler'>
+                    <span class='switch_slider'></span>
+                </label>
+            </div>
+        </div>
+        
+        <div id='renderer_frequency_settings' class='hidden'>
+            <div class='switch_label setting'>
+                <label for='exponential_gain_toggler' translate-path-title='locale.settings.rendererSettings.toggleExponentialGain'></label>
+                <label class='switch'>
+                    <input type='checkbox' checked id='exponential_gain_toggler'>
+                    <span class='switch_slider'></span>
+                </label>
+            </div>
+            
+            <div class='switch_label setting'>
+                <label for='dynamic_gain_toggler' translate-path-title='locale.settings.rendererSettings.toggleDynamicGain'></label>
+                <label class='switch'>
+                    <input type='checkbox' checked id='dynamic_gain_toggler'>
+                    <span class='switch_slider'></span>
+                </label>
+            </div>
+            
+            <div class='switch_label setting'>
+                <label for='logarithmic_frequency_toggler' translate-path-title='locale.settings.rendererSettings.toggleLogarithmicFrequency'></label>
+                <label class='switch'>
+                    <input type='checkbox' checked id='logarithmic_frequency_toggler'>
+                    <span class='switch_slider'></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label for='preset_names_toggler' translate-path-title='locale.settings.rendererSettings.toggleDrawingPresetNames'></label>
+            <label class='switch'>
+                <input type='checkbox' id='preset_names_toggler'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label for='note_toggler' translate-path-title='locale.settings.rendererSettings.toggleNotesRendering'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='note_toggler'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label for='active_note_toggler' translate-path-title='locale.settings.rendererSettings.toggleDrawingActiveNotes'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='active_note_toggler'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label for='visual_pitch_toggler' translate-path-title='locale.settings.rendererSettings.toggleDrawingVisualPitch'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='visual_pitch_toggler'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label for='dot_display_toggler' translate-path-title='locale.settings.rendererSettings.toggleRenderingDotDisplay'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='dot_display_toggler'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+    </div>
+
+
+    <div class='settings_group'>
+        <h2 translate-path='locale.settings.keyboardSettings.title'></h2>
+        <div class='setting setting_select'><label for='channel_selector' translate-path-title='locale.settings.keyboardSettings.selectedChannel'></label>
+        <select id='channel_selector'>
+        </select>
+        </div>
+        
+        <div class='setting setting_select'><label for='keyboard_size_selector' translate-path-title='locale.settings.keyboardSettings.keyboardSize'></label>
+        <select id='keyboard_size_selector'>
+            <option value='full' translate-path='locale.settings.keyboardSettings.keyboardSize.full'></option>
+            <option value='piano' translate-path='locale.settings.keyboardSettings.keyboardSize.piano'></option>
+            <option value='5 octaves' translate-path='locale.settings.keyboardSettings.keyboardSize.fiveOctaves'></option>
+            <option value='two octaves' translate-path='locale.settings.keyboardSettings.keyboardSize.twoOctaves'></option>
+            <option value='${USE_MIDI_RANGE}' translate-path='locale.settings.keyboardSettings.keyboardSize.useSongKeyRange'></option>
+        </select>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label translate-path-title='locale.settings.keyboardSettings.toggleTheme'></label>
+            <label class='switch'>
+                <input type='checkbox' id='mode_selector'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        <div class='switch_label setting'>
+            <label translate-path-title='locale.settings.keyboardSettings.show'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='keyboard_show'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label translate-path-title='locale.settings.keyboardSettings.forceMaxVelocity'></label>
+            <label class='switch'>
+                <input type='checkbox' id='keyboard_force_max_velocity'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+    </div>
+    
+    
+    <div class='settings_group' id='midi_settings'>
+        <h2 translate-path='locale.settings.midiSettings.title'></h2>
+        <div class='setting setting_select'><label for='midi_input_selector' translate-path-title='locale.settings.midiSettings.midiInput'></label>
+        <select id='midi_input_selector'>
+            <option value='-1' translate-path='locale.settings.midiSettings.midiInput.disabled'></option>
+        </select>
+        </div>
+        
+        <div class='setting setting_select'><label for='midi_output_selector' translate-path-title='locale.settings.midiSettings.midiOutput'></label>
+        <select id='midi_output_selector'>
+            <option value='-1' translate-path='locale.settings.midiSettings.midiOutput.disabled'></option>
+        </select>
+        </div>
+        <div id='midi_port_selectors'>
+            <div class='setting setting_select'>
+            <label for='midi_port_selector1' translate-path-title='locale.settings.midiSettings.midiOutput.port1'></label>
+            <select class='midi_port_selector' id='midi_output_selector1'>
+                <option value='-1' translate-path='locale.settings.midiSettings.midiOutput.doNotUse'></option>
+            </select>
+            </div>
+            
+            <div class='setting setting_select'>
+            <label for='midi_port_selector2' translate-path-title='locale.settings.midiSettings.midiOutput.port2'></label>
+            <select class='midi_port_selector' id='midi_output_selector2'>
+                <option value='-1' translate-path='locale.settings.midiSettings.midiOutput.doNotUse'></option>
+            </select>
+            </div>
+            
+            <div class='setting setting_select'>
+            <label for='midi_port_selector3' translate-path-title='locale.settings.midiSettings.midiOutput.port3'></label>
+            <select class='midi_port_selector' id='midi_output_selector3'>
+                <option value='-1' translate-path='locale.settings.midiSettings.midiOutput.doNotUse'></option>
+            </select>
+            </div>
+        </div>
+        
+        <h4 class='hover_reminder' translate-path-title='locale.settings.midiSettings.reminder'></h4>
+    </div>
+    
+    
+    <div class='settings_group'>
+        <h2 translate-path='locale.settings.interfaceSettings.title'></h2>
+        <div class='setting setting_select'><label for='theme_selector' translate-path-title='locale.settings.interfaceSettings.theme'></label>
+        <select id='theme_selector'>
+        <!-- will be added via javascript -->
+        </select>
+        </div>
+        
+        <div class='switch_label setting'>
+            <label translate-path-title='locale.settings.interfaceSettings.showControls'></label>
+            <label class='switch'>
+                <input type='checkbox' checked id='show_sequencer_controls_button'>
+                <span class='switch_slider'></span>
+            </label>
+        </div>
+        
+        <div class='setting setting_select'><label for='language_selector' translate-path-title='locale.settings.interfaceSettings.selectLanguage'></label>
+        <select id='language_selector'>
+         <option value='help-translate' translate-path='locale.settings.interfaceSettings.selectLanguage.helpTranslate'></option>
+        <!-- will be added via javascript -->
+        </select>
+        </div>
+        
+        <div class='setting setting_select'><label for='layout_selector' translate-path-title='locale.settings.interfaceSettings.layoutDirection'></label>
+        <select id='layout_selector'>
+            <option value='downwards' selected translate-path='locale.settings.interfaceSettings.layoutDirection.values.downwards'></option>
+            <option value='upwards' translate-path='locale.settings.interfaceSettings.layoutDirection.values.upwards'></option>
+            <option value='left' translate-path='locale.settings.interfaceSettings.layoutDirection.values.leftToRight'></option>
+            <option value='right' translate-path='locale.settings.interfaceSettings.layoutDirection.values.rightToLeft'></option>
+        </select>
+        </div>
+        
+        <div class='setting setting_file'>
+            <label for='background_file_upload' translate-path-title='locale.settings.interfaceSettings.backgroundImage'></label>
+            <label class='file_picker' for='background_file_upload'>
+                <span class='file_picker_action' translate-path='locale.settings.interfaceSettings.chooseImage'></span>
+                <span class='file_picker_name' aria-hidden='true'></span>
+                <input type='file' accept='image/*' id='background_file_upload'/>
+            </label>
+        </div>
+        
+        
+        <h3><a id='reload_synth'></></h3>
+        
+        <h4 class='hover_reminder' translate-path-title='locale.settings.interfaceSettings.reminder'></h4>
+        <h4><a href='https://github.com/spessasus/SpessaSynth/wiki/How-To-Use-App' target='_blank' translate-path-title='locale.synthesizerController.helpButton'></a></h4>
+    </div>
+</div>
+`;

@@ -1,0 +1,51 @@
+export const interfaceSettings = {
+    title: "Ustawienia interfejsu",
+
+    theme: {
+        title: "Motyw",
+        description: "Wybierz motyw programu"
+    },
+
+    selectLanguage: {
+        title: "Język",
+        description: "Zmień język programu",
+        helpTranslate: "Przetłumacz SpessaSynth"
+    },
+
+    layoutDirection: {
+        title: "Układ",
+        description: "Kierunek układu wizualizacji i pianina",
+        values: {
+            downwards: "W dół",
+            upwards: "W górę",
+            leftToRight: "Od lewej do prawej",
+            rightToLeft: "Od prawej do lewej"
+        }
+    },
+
+    backgroundImage: {
+        title: "Obrazek w tle",
+        description: "Ustaw obrazek w tle wizualizacji"
+    },
+    chooseImage: "Wybierz obraz",
+
+    synthReload: {
+        chromium: "Przeładuj w trybie Chrome",
+        worklet: "Przeładuj w trybie Worklet"
+    },
+
+    reminder: {
+        title: "Czy wiedziałeś, że możesz najechać na ustawienia, aby uzyskać więcej informacji?",
+        description: "Tak jak ta!"
+    },
+
+    useFirefox: {
+        firefox: "Przeglądarka firefox",
+        recommended: "jest mocno zalecana dla najlepszej wydajności."
+    },
+
+    showControls: {
+        title: "Pokaż kontrolki",
+        description: "Pokaż kontrolki do przewijania czasu"
+    }
+};

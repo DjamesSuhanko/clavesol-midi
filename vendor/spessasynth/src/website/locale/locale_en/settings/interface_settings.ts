@@ -1,0 +1,51 @@
+export const interfaceSettings = {
+    title: "Interface settings",
+
+    theme: {
+        title: "Theme",
+        description: "Choose the color theme of the interface"
+    },
+
+    selectLanguage: {
+        title: "Language",
+        description: "Change the program language",
+        helpTranslate: "Translate SpessaSynth"
+    },
+
+    layoutDirection: {
+        title: "Layout direction",
+        description: "The layout direction of the renderer and keyboard",
+        values: {
+            downwards: "Downwards",
+            upwards: "Upwards",
+            leftToRight: "Left to right",
+            rightToLeft: "Right to left"
+        }
+    },
+
+    backgroundImage: {
+        title: "Background image",
+        description: "Set the background image for visualization"
+    },
+    chooseImage: "Choose image",
+
+    synthReload: {
+        chromium: "Reload in Chrome mode",
+        worklet: "Reload in Worklet mode"
+    },
+
+    reminder: {
+        title: "Did you know that you can hover over the settings to get more information?",
+        description: "Like this one!"
+    },
+
+    useFirefox: {
+        firefox: "Firefox Web Browser",
+        recommended: "is highly recommended for the best performance."
+    },
+
+    showControls: {
+        title: "Show controls",
+        description: "Show the transport control buttons"
+    }
+};

@@ -1,0 +1,66 @@
+# Clave Sol MIDI — Etapa 1
+
+SpessaSynth Web App **completo**, edição local original, preparado para futura personalização. Sem catálogo ou alterações visuais nesta etapa.
+
+## Versão e requisitos
+
+SpessaSynth **v4.4.0**, commit `1f95f3a737592fb78db9504a0152465f3d60c5d3`.
+Node.js **24.22.1** (versão testada, também em `.nvmrc`), npm **11.19.1**, navegador Chromium ou Firefox com Web Audio. Os comandos da raiz usam sintaxe de ambiente Linux/POSIX.
+
+## Instalar, compilar e iniciar
+
+```bash
+cd /home/djames/Documents/ClaveSol/SITE/clavesol-midi
+npm run setup
+npm run build
+npm start
+```
+
+Abra **http://localhost:8181**. Se a porta estiver ocupada, o servidor oficial tenta a seguinte; consulte a URL no terminal. Pare com Ctrl+C. A instalação e a compilação já foram realizadas nesta entrega; para executar novamente basta `npm start`.
+
+Clique na página para ativar o áudio, clique em **Upload your MIDI files** e selecione `demo/The HYBRID Collage (v2.0).mid`. Mantenha **GeneralUserGS.sf3** selecionada. O player inicia a demonstração com visualização animada e teclado virtual. Espaço pausa/retoma. Use navegador desktop para mais espaço nos painéis.
+
+A primeira instalação requer internet. A demonstração local usa a SoundFont e o MIDI já baixados. Abra por HTTP localhost, não por file://. O comando da raiz limita o servidor ao computador local e desativa a atualização automática para preservar a revisão. Use sempre o comando da raiz.
+
+Após editar os fontes, execute `npm run build`, reinicie o servidor e recarregue a página. O `npm start` oficial só compila automaticamente quando o servidor compilado ainda não existe; não é um watcher. Não é necessário usar o `dev` upstream, que espera checkouts irmãos das bibliotecas.
+
+## Testes
+
+```bash
+npm test
+npm run build
+curl -fsS http://localhost:8181/getversion
+curl -fsS http://localhost:8181/soundfonts
+```
+
+`npm test` executa o script oficial `test:types` (ESLint e TypeScript); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` já inclui esse mesmo teste, portanto não é preciso repeti-lo depois de um build bem-sucedido.
+
+Resultados nesta entrega:
+- `npm ci`: sucesso, 163 pacotes instalados, zero vulnerabilidades reportadas pelo npm.
+- Build oficial completo: sucesso; ESLint e TypeScript passaram. Bundles grandes geraram avisos informativos de tamanho, sem falha.
+- HTTP: versão 4.4.0, listagem de GeneralUserGS.sf3 e AudioWorklet com resposta 200.
+- Navegador integrado: SoundFont e MIDI oficial carregados; tempo avançando, vozes ativas, ondas, notas coloridas e teclado renderizados. Pausa por espaço manteve 00:34 e levou as vozes a zero; retomada avançou para 00:35 com vozes ativas.
+- Painéis do sintetizador/mixer, instrumentos, efeitos GS/XG e configurações abertos. Menu de exportação apresentou WAV, vídeo, MIDI, SoundFont, DLS e RMI.
+- Sem erros de console observados durante essa verificação; aviso de debug da edição de desenvolvimento.
+- Exportação WAV iniciada, mas interrompida ao recarregar a página para evitar teste prolongado, conforme solicitação. Não foi validado arquivo de áudio exportado.
+- Áudio nos alto-falantes não foi ouvido pelo agente. A atividade de síntese e a visualização foram observadas; confirmação auditiva permanece manual.
+
+### Verificação manual breve
+
+1. Carregue a demonstração e ouça alguns segundos; confirme áudio, notas em movimento e teclas iluminadas.
+2. Pause/retome com espaço; experimente volume, posição e velocidade nos controles inferiores.
+3. Abra Synthesizer controller: confira canais/instrumentos e efeitos; teste mute/solo ou um instrumento, se desejar.
+4. Em Settings, confira Show notes, Show active notes, teclado e visualização. As configurações são as originais.
+5. Opcional: em Export File, exporte WAV/MIDI e confira o arquivo. Vídeo, dispositivos MIDI físicos e todas as combinações de efeitos não foram testados nesta etapa.
+
+Não é necessário aguardar os 2min33s da música para validar a demonstração.
+
+## Organização
+
+- `vendor/spessasynth/`: fontes oficiais completos, package-lock.json, licença Apache 2.0, documentação e SoundFont.
+- `demo/`: um MIDI oficial e créditos originais.
+- `package.json`: atalhos para instalar, compilar, iniciar e testar.
+- `.nvmrc`, `.gitignore`, `UPSTREAM.md` e este README.
+- Gerados localmente, ignorados pelo Git: `vendor/spessasynth/node_modules/`, `dist/`, `local-dev/`, `server/` e caches de compilação. O `server/config.json` contém preferências locais.
+
+A licença e atribuições originais permanecem em `vendor/spessasynth/LICENSE`, README e fontes. Consulte `UPSTREAM.md` para procedência e as duas adaptações de execução do servidor. O repositório Clave Sol e seus templates não foram modificados. Não houve publicação, configuração de domínio ou implementação da etapa 2.

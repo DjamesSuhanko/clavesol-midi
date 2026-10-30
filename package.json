@@ -1,0 +1,14 @@
+{
+  "name": "clavesol-midi",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "setup": "npm ci --prefix vendor/spessasynth",
+    "start": "SPESSASYNTH_HOST=127.0.0.1 SPESSASYNTH_AUTO_UPDATE=0 npm start --prefix vendor/spessasynth",
+    "build": "npm run build --prefix vendor/spessasynth",
+    "test": "npm run test:types --prefix vendor/spessasynth"
+  }
+}

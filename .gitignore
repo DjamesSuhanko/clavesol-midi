@@ -1,0 +1,30 @@
+node_modules/
+/vendor/spessasynth/dist/
+/vendor/spessasynth/local-dev/
+/vendor/spessasynth/server/
+/vendor/spessasynth/local-edition-build/
+/vendor/spessasynth/src/server/config.json
+*.tsbuildinfo
+*.log
+*.tmp
+*~
+.DS_Store
+.idea/
+.vscode/
+coverage/
+work/
+# External MIDI collections must stay outside version control.
+*.mid
+*.midi
+*.kar
+*.rmi
+/midis/
+/collections/
+/external/
+# Only an explicitly documented official demo may be tracked.
+!/demo/*.mid
+# Preserve only the SoundFont bundled upstream.
+*.sf2
+*.sf3
+*.dls
+!/vendor/spessasynth/soundfonts/GeneralUserGS.sf3

@@ -1,0 +1,165 @@
+import type { SpessaSynthSettings } from "../settings.ts";
+import type { localeList } from "../../../locale/locale_list.ts";
+import type { LayoutType } from "../../../../server/saved_settings.ts";
+import { WorkerSynthesizer } from "spessasynth_lib";
+import { Ut } from "../../utils/other.js";
+import { URLParamUtils } from "../../utils/url_params.ts";
+import { type ThemeID, themeList } from "../../themes/theme_list.ts";
+
+/**
+ * @this {SpessaSynthSettings}
+ * @private
+ */
+export function _createInterfaceSettingsHandler(this: SpessaSynthSettings) {
+    const themeSelect = this.htmlControls.interface.themeSelector;
+    // Load up the themes
+    for (const [id, theme] of Object.entries(themeList)) {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = theme.name;
+        themeSelect.append(option);
+    }
+    themeSelect.value = this.theme;
+    themeSelect.addEventListener("change", () => {
+        this.applyTheme(themeSelect.value as ThemeID);
+        this.saveSettings();
+    });
+
+    const select = this.htmlControls.interface.languageSelector;
+    // Load up the languages
+    for (const [code, locale] of Object.entries(this.locales)) {
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = locale.localeName;
+        select.append(option);
+    }
+    select.value = this.locale.localeCode || "en";
+    select.addEventListener("change", () => {
+        if (select.value === "help-translate") {
+            window.open(
+                "https://github.com/spessasus/SpessaSynth/blob/master/src/website/locale/README.md"
+            );
+            select.value = this.locale.localeCode || "en";
+            return;
+        }
+        this.locale.changeGlobalLocale(select.value as keyof typeof localeList);
+        this.saveSettings();
+    });
+
+    // Ensure that "help-translate" is not selected
+    setTimeout(() => {
+        if (select.value === "help-translate") {
+            select.value = this.locale.localeCode || "en";
+            this.saveSettings();
+        }
+    }, 100);
+
+    const layoutSelect = this.htmlControls.interface.layoutSelector;
+    layoutSelect.addEventListener("change", () => {
+        this.changeLayout(layoutSelect.value as LayoutType);
+        this.saveSettings();
+        layoutSelect.blur();
+    });
+
+    // IMPORTANT
+    // This DOES NOT get saved in settings!
+    const seqControls = this.htmlControls.interface.showControlsToggle;
+    seqControls.addEventListener("change", () => {
+        const bottomPart =
+            document.querySelectorAll<HTMLElement>(".bottom_part")[0];
+        if (seqControls.checked) {
+            Ut.show(bottomPart);
+        } else {
+            Ut.hide(bottomPart);
+        }
+    });
+
+    const backgroundImage = document.querySelector<HTMLInputElement>(
+        "#background_file_upload"
+    )!;
+    const backgroundImageName =
+        document.querySelector<HTMLSpanElement>(".file_picker_name")!;
+    backgroundImage.addEventListener("change", () => {
+        if (!backgroundImage?.files?.[0]) {
+            this.renderer.setBackground(undefined);
+            backgroundImageName.textContent = "";
+            backgroundImageName.removeAttribute("title");
+            return;
+        }
+        const file = backgroundImage.files[0];
+        this.renderer.setBackground(file);
+        backgroundImageName.textContent = file.name;
+        backgroundImageName.title = file.name;
+    });
+
+    // Reload synth
+    const anchor = document.querySelector<HTMLAnchorElement>("#reload_synth")!;
+    const url = new URL(window.location.href);
+    if (this.synth instanceof WorkerSynthesizer) {
+        this.locale.bindObjectProperty(
+            anchor,
+            "textContent",
+            "locale.settings.interfaceSettings.synthReload.worklet"
+        );
+        url.searchParams.set(URLParamUtils.BACKEND, "worklet");
+    } else {
+        this.locale.bindObjectProperty(
+            anchor,
+            "textContent",
+            "locale.settings.interfaceSettings.synthReload.chromium"
+        );
+        url.searchParams.set(URLParamUtils.BACKEND, "worker");
+    }
+
+    anchor.href = url.toString();
+}
+
+export function _changeLayout(this: SpessaSynthSettings, layout: LayoutType) {
+    const wrapper = document.querySelector("#keyboard_canvas_wrapper")!;
+    const canvas = document.querySelector("#note_canvas")!;
+    switch (layout) {
+        case "downwards": {
+            wrapper.classList.remove(
+                "upwards",
+                "left_to_right",
+                "right_to_left"
+            );
+
+            canvas.classList.remove("vertical");
+            this.renderer.notesFalling = true;
+            this.renderer.vertical = false;
+            break;
+        }
+
+        case "upwards": {
+            wrapper.classList.add("upwards");
+            wrapper.classList.remove("left_to_right", "right_to_left");
+
+            canvas.classList.remove("vertical");
+            this.renderer.notesFalling = false;
+            this.renderer.vertical = false;
+            break;
+        }
+
+        case "left": {
+            wrapper.classList.remove("upwards");
+            wrapper.classList.add("left_to_right");
+            wrapper.classList.remove("right_to_left");
+
+            canvas.classList.add("vertical");
+            this.renderer.notesFalling = false;
+            this.renderer.vertical = true;
+            break;
+        }
+
+        case "right": {
+            wrapper.classList.remove("upwards", "left_to_right");
+            wrapper.classList.add("right_to_left");
+
+            canvas.classList.add("vertical");
+            this.renderer.notesFalling = true;
+            this.renderer.vertical = true;
+        }
+    }
+    this.renderer.updateSize();
+}
