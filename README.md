@@ -1,6 +1,14 @@
-# Clave Sol MIDI — Etapas 1, 2, 3A e 3B
+# Clave Sol MIDI — Etapas 1, 2, 3A, 3B e 4A
 
 SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Biblioteca inicial com 18 músicas de 18 compositores. Veja ETAPA-2.md para os temas e ETAPA-3B.md para a biblioteca.
+
+## Gerador de catálogo — Etapa 4A
+
+```bash
+MIDI_SOURCE_DIR=/home/djames/Documents/MIDIS/Classic python3 scripts/gerar_catalogo.py
+```
+
+Gera manualmente `catalogs/classic/catalog.json` e `summary.json`: 337 músicas, 26 compositores e 8.116.500 bytes. Não modifica a biblioteca atual de 18 músicas nem copia arquivos MIDI. Consulte `ETAPA-4A.md` para esquema, configuração de outras coleções e testes. O gerador usa Python 3.10+ e não lê `.env.local` automaticamente.
 
 ## Biblioteca inicial — Etapa 3B
 
@@ -41,7 +49,7 @@ curl -fsS http://localhost:8181/getversion
 curl -fsS http://localhost:8181/soundfonts
 ```
 
-`npm test` executa o script oficial `test:types` (ESLint e TypeScript) e oito testes: seis da integração MIDI (`npm run test:midi`) e dois da biblioteca (`npm run test:library`); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` inclui a verificação estática oficial. Os testes da rota externa são executados separadamente por `npm run test:midi`.
+`npm test` executa o script oficial `test:types` (ESLint e TypeScript) e treze testes: seis da integração MIDI (`npm run test:midi`), dois da biblioteca (`npm run test:library`) e cinco do catálogo Python (`npm run test:catalog`); não há uma suíte unitária separada declarada no package.json desta revisão. `npm run build` inclui a verificação estática oficial. Os testes da rota externa são executados separadamente por `npm run test:midi`.
 
 Resultados históricos da Etapa 1 (para a validação atual, consulte PROGRESSO.md):
 - `npm ci`: sucesso, 163 pacotes instalados, zero vulnerabilidades reportadas pelo npm.

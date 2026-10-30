@@ -30,3 +30,7 @@ work/
 !/vendor/spessasynth/soundfonts/GeneralUserGS.sf3
 
 .env.local
+
+# Python generator/test caches
+__pycache__/
+*.py[cod]

@@ -9,8 +9,10 @@
     "setup": "npm ci --prefix vendor/spessasynth",
     "start": "node scripts/start.mjs",
     "build": "npm run build --prefix vendor/spessasynth",
-    "test": "npm run test:types --prefix vendor/spessasynth && npm run test:midi && npm run test:library",
+    "test": "npm run test:types --prefix vendor/spessasynth && npm run test:midi && npm run test:library && npm run test:catalog",
     "test:midi": "node --test tests/midi-source.test.mjs",
-    "test:library": "node --test tests/library.test.mjs"
+    "test:library": "node --test tests/library.test.mjs",
+    "catalog:generate": "python3 scripts/gerar_catalogo.py",
+    "test:catalog": "python3 -m unittest discover -s tests -p test_gerar_catalogo.py -v"
   }
 }

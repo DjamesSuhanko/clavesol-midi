@@ -1,3 +1,19 @@
+# Etapa 4A — concluída
+
+- Gerador manual `scripts/gerar_catalogo.py`, somente biblioteca padrão Python.
+- Saídas: `catalogs/classic/catalog.json` e `catalogs/classic/summary.json`.
+- Acervo real confirmado: 337 MIDIs, 26 compositores, 27 diretórios, 8.116.500 bytes.
+- Contagem independente e conjunto exato dos caminhos conferidos.
+- Duas gerações idênticas byte a byte; hashes, tamanhos e mtimes dos originais preservados.
+- Nomes especiais, três níveis de pastas, estabilidade dos IDs e exclusão de links validados em testes.
+- `npm test`: aprovado — ESLint, TypeScript, 8 testes Node e 5 testes Python.
+- `git diff --check`: aprovado.
+- Nenhuma alteração em vendor/spessasynth, no player ou na interface. Amostra da 3B preservada.
+- Documentação: ETAPA-4A.md e README.md. Nada publicado; Etapa 4B não iniciada.
+- Sem pendências desta etapa. Para regenerar: `MIDI_SOURCE_DIR=/home/djames/Documents/MIDIS/Classic python3 scripts/gerar_catalogo.py`.
+
+---
+
 # Etapa 3B — concluída
 
 ## Estado final — retomada em 30/10/2026
