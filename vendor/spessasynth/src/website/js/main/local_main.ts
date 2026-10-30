@@ -174,9 +174,7 @@ const initializeManagerSF = async () => {
         window.manager.synth?.setLogLevel(false, false, false);
     }
 
-    titleString = window.manager.localeManager.getLocaleString(
-        "locale.titleMessage"
-    );
+    titleString = "Clave Sol MIDI — Biblioteca Musical";
 
     synthReady = true;
     titleMessage.textContent = titleString;

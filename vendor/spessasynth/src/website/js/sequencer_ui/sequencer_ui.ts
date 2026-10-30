@@ -837,7 +837,7 @@ export class SequencerUI {
         let textToShow = this.currentSongTitle;
         if (!this.seq.midiData) {
             // Set to default title
-            textToShow = this.locale.getLocaleString("locale.titleMessage");
+           textToShow = "Clave Sol MIDI — Biblioteca Musical"; 
         }
         this.mainTitleMessageDisplay.textContent = textToShow;
         this.mainTitleMessageDisplay.classList.remove(
