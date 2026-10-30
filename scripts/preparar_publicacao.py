@@ -36,6 +36,60 @@ def write_json(file, data):
     file.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
+def personalizar_html_publicacao(html):
+    # Aplica a identidade pública do Clave Sol MIDI ao HTML FINAL do build.
+    import re
+
+    titulo = 'Clave Sol MIDI — Biblioteca Musical'
+    descricao = ('Explore, ouça e baixe músicas MIDI. Biblioteca musical com '
+                 'visualização animada das notas, instrumentos e teclado virtual.')
+
+    # Substitui metatags de prévia independentemente da ordem dos atributos.
+    def filtrar_meta(match):
+        tag = match.group(0)
+        atributo = re.search(r'\b(?:name|property)\s*=\s*"([^"]+)"', tag, re.I)
+        nome = atributo.group(1).lower() if atributo else ''
+        if nome.startswith(('og:', 'twitter:')) or nome in ('description', 'author', 'keywords'):
+            return ''
+        return tag
+
+    html = re.sub(r'<meta\b[^>]*>', filtrar_meta, html, flags=re.I | re.S)
+    html = re.sub(r'<link\b(?=[^>]*\brel\s*=\s*"canonical")[^>]*>', '', html, flags=re.I | re.S)
+
+    html, titulos = re.subn(r'<title\b[^>]*>.*?</title>', f'<title>{titulo}</title>',
+                           html, count=1, flags=re.I | re.S)
+    html, cabecalhos = re.subn(r'<h1\b(?=[^>]*\bid\s*=\s*"title")[^>]*>.*?</h1>',
+                               f'<h1 id="title">{titulo}</h1>', html, count=1, flags=re.I | re.S)
+    if titulos != 1 or cabecalhos != 1 or '</head>' not in html:
+        raise ValueError('Estrutura HTML mudou: título ou cabeçalho não encontrado.')
+
+    # Retira links promocionais antigos (já ocultos pela interface Clave Sol).
+    html = re.sub(
+        r'\s*<label\b(?=[^>]*\bclass\s*=\s*"link")[^>]*>\s*'
+        r'<a\b(?=[^>]*\bhref\s*=\s*"https://(?:github\.com/spessasus/SpessaSynth[^"]*|discord\.gg/[^"]+)")[^>]*>'
+        r'.*?</a>\s*</label>', '', html, flags=re.I | re.S)
+
+    html = re.sub(r'<noscript\b[^>]*>.*?</noscript>',
+                  '<noscript><h1>Ative o JavaScript para utilizar o Clave Sol MIDI.</h1></noscript>',
+                  html, count=1, flags=re.I | re.S)
+
+    metadados = f'''    <!-- Clave Sol MIDI: metadados da publicação -->
+    <meta name="description" content="{descricao}">
+    <meta name="author" content="Clave Sol">
+    <link rel="canonical" href="https://midi.clavesol.com.br/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Clave Sol MIDI">
+    <meta property="og:title" content="{titulo}">
+    <meta property="og:description" content="{descricao}">
+    <meta property="og:url" content="https://midi.clavesol.com.br/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{titulo}">
+    <meta name="twitter:description" content="{descricao}">
+'''
+    html = html.replace('</head>', metadados + '</head>', 1)
+    html = html.replace('<html lang="en"', '<html lang="pt-BR"', 1)
+    return html
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sync-midis', action='store_true', help='Atualiza public/midis a partir do acervo externo, sem alterá-lo')
@@ -84,6 +138,7 @@ def main():
         html = (build / 'local_edition_index.html').read_text()
         html = html.replace('<html lang="en">', '<html lang="en" data-hosting="static">')
         if 'data-hosting="static"' not in html: raise ValueError('HTML upstream incompatível.')
+        html = personalizar_html_publicacao(html)
         (output / 'index.html').write_text(html)
         library = []
         for entry in entries:
