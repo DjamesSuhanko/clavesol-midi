@@ -461,23 +461,14 @@ export class Manager {
         this.keyboard = this.renderer.keyboard;
         this.renderer.startRendering();
 
-        const checkResize = () => {
-            this?.renderer?.updateSize();
-            this.renderer?.renderOneFrame();
-            const h = window.location.hostname;
-            // Domain correction
-            if (
-                h !== "spessasus.github.io" &&
-                h !== "localhost" &&
-                h !== "127.0.0.1"
-            ) {
-                window.location.href =
-                    "https://spessasus.github.io/SpessaSynth";
-            }
-        };
-        checkResize();
-        window.addEventListener("resize", checkResize.bind(this));
-        window.addEventListener("orientationchange", checkResize.bind(this));
+	const checkResize = () => {
+	    this?.renderer?.updateSize();
+	    this?.renderer?.renderOneFrame();
+	};
+
+	checkResize();
+	window.addEventListener("resize", checkResize.bind(this));
+	window.addEventListener("orientationchange", checkResize.bind(this));
 
         // Set up synth UI
         this.synthUI = new SynthesizerUI(
