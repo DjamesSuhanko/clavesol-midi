@@ -1,6 +1,12 @@
-# Clave Sol MIDI — Etapas 1, 2, 3A, 3B e 4A
+# Clave Sol MIDI
 
-SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Biblioteca inicial com 18 músicas de 18 compositores. Veja ETAPA-2.md para os temas e ETAPA-3B.md para a biblioteca.
+SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Biblioteca integrada ao catálogo completo de 337 músicas e 26 compositores. Veja ETAPA-2.md para os temas e ETAPA-3B.md para a biblioteca.
+
+## Publicação estática
+
+Consulte `PUBLICACAO.md` para atualizar os MIDIs, preparar `dist/` e publicar manualmente. `npm run build:pages` usa o build oficial e somente arquivos versionados. O workflow `.github/workflows/publicar.yml` possui exclusivamente `workflow_dispatch`; nenhum push inicia publicação.
+
+Os registros de etapas abaixo são históricos; a biblioteca atual utiliza o catálogo completo e a cópia autorizada para publicação fica em `public/midis/`.
 
 ## Gerador de catálogo — Etapa 4A
 

@@ -1,3 +1,4 @@
+import { staticMode } from "./static_mode.ts";
 const normalize = (value: string) => value.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "").toLowerCase();
 
 interface Song {
@@ -88,7 +89,7 @@ export function installMidiLibrary(start: (file: File) => Promise<void>, prepare
         loading = true;
         status.textContent = "Carregando biblioteca…";
         try {
-            const response = await fetch("/clave-sol/library");
+            const response = await fetch(staticMode ? "library.json" : "/clave-sol/library");
             if (!response.ok) {
                 const error = (await response.json()) as { error?: string };
                 throw new Error(error.error ?? "Biblioteca indisponível.");

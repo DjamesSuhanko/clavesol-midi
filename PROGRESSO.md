@@ -1,3 +1,14 @@
+# Catálogo completo e preparação de publicação
+
+- Biblioteca local integrada ao catálogo de 337 músicas.
+- Distribuição estática criada com build oficial, SoundFont e cópia versionada em public/midis.
+- Build indispensável passou; 337 URLs/arquivos conferidos por hash. Sem navegador ou suítes extensas.
+- Workflow exclusivamente manual preparado: .github/workflows/publicar.yml.
+- Documentação: PUBLICACAO.md. DNS não alterado; workflow não executado.
+- Configuração/envio do remoto: próximo passo nesta execução.
+
+---
+
 # Etapa 4A — concluída
 
 - Gerador manual `scripts/gerar_catalogo.py`, somente biblioteca padrão Python.

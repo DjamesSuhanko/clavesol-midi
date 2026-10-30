@@ -1,3 +1,4 @@
+import { staticMode } from "./static_mode.ts";
 /** Small local-only bridge; playback stays in the original upload/Manager flow. */
 export function installMidiTestButton(start: (file: File) => Promise<void>, prepare: () => Promise<void>) {
     const button = document.querySelector<HTMLButtonElement>("#midi_test_button")!;
@@ -10,10 +11,10 @@ export function installMidiTestButton(start: (file: File) => Promise<void>, prep
         try {
             // Resume Web Audio before the first network await, within the user gesture.
             await prepare();
-            const metadata = await fetch("/clave-sol/midi-test");
-            const info = (await metadata.json()) as { fileName?: string; relativePath?: string; error?: string };
+            const metadata = await fetch(staticMode ? "test-song.json" : "/clave-sol/midi-test");
+            const info = (await metadata.json()) as { fileName?: string; relativePath?: string; error?: string; url?: string };
             if (!metadata.ok || !info.fileName) throw new Error(info.error ?? "Não foi possível selecionar o MIDI.");
-            const response = await fetch("/clave-sol/midi-test/file");
+            const response = await fetch(staticMode && info.url ? info.url : "/clave-sol/midi-test/file");
             if (!response.ok) throw new Error("Não foi possível ler o MIDI. Verifique a configuração e reinicie o servidor.");
             await start(new File([await response.arrayBuffer()], info.fileName, { type: "audio/midi" }));
             status.textContent = `Música carregada: ${info.relativePath ?? info.fileName}`;

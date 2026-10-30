@@ -1,3 +1,4 @@
+import { staticMode, readStaticSettings, saveStaticSettings } from "./static_mode.ts";
 import { installMidiLibrary } from "./midi_library.ts";
 import { installMidiTestButton } from "./midi_test_button.ts";
 import type { MIDIFile } from "../utils/drop_file_handler.ts";
@@ -32,6 +33,7 @@ declare global {
  * (only on the local edition that's why it's here and not in the demo_main.js)
  */
 window.saveSettings = (settingsData: SavedSettings) => {
+    if (staticMode) { saveStaticSettings(settingsData); return; }
     void fetch("/savesettings", {
         method: "POST",
         body: JSON.stringify(settingsData),
@@ -44,7 +46,7 @@ window.saveSettings = (settingsData: SavedSettings) => {
 /**
  * Reads the settings
  */
-window.savedSettings = new Promise((resolve) => {
+window.savedSettings = staticMode ? Promise.resolve(readStaticSettings()) : new Promise((resolve) => {
     void fetch("/getsettings").then((response) =>
         response.json().then((parsedSettings) => {
             resolve(parsedSettings as SavedSettings);
@@ -68,7 +70,7 @@ fileInput.focus();
 let synthReady = false;
 
 // Load version
-const v = await fetch("/getversion");
+const v = await fetch(staticMode ? "version.txt" : "/getversion");
 window.SPESSASYNTH_VERSION = await v.text();
 
 let soundBankBufferCurrent: ArrayBuffer | undefined = undefined;
@@ -94,7 +96,7 @@ async function fetchFont(
     fileName: string,
     callback: (arg0: number) => unknown
 ): Promise<ArrayBuffer> {
-    const response = await fetch(`${fileName}`);
+    const response = await fetch(staticMode ? `soundfonts/${encodeURIComponent(fileName)}` : fileName);
     if (!response.ok || !response.body) {
         titleMessage.textContent = "Error downloading soundfont!";
         throw new Error(response.statusText);
@@ -242,7 +244,7 @@ const localeManager = new LocaleManager(
 );
 
 // Load the list of soundfonts
-const r = await fetch("soundfonts");
+const r = await fetch(staticMode ? "soundfonts.json" : "soundfonts");
 
 if (!r.ok) {
     titleMessage.textContent = "Error fetching soundfonts!";
@@ -272,7 +274,7 @@ for (const sf of soundBanks) {
 
 sfSelector.addEventListener("change", async () => {
     sfSelector.blur();
-    await fetch(`/setlastsf2?sfname=${encodeURIComponent(sfSelector.value)}`);
+    if (!staticMode) await fetch(`/setlastsf2?sfname=${encodeURIComponent(sfSelector.value)}`);
     if (window.manager?.seq?.midiData) {
         window.manager.seq.pause();
     }

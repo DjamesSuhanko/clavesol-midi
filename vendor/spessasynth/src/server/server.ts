@@ -35,7 +35,7 @@ const configManager = await LocalEditionConfig.initialize();
 
 const midiRoute = createMidiRoute(process.env.MIDI_SOURCE_DIR, process.env.MIDI_TEST_FILE);
 
-const sample = JSON.parse(await fs.readFile(path.join(rootDir, "library-sample.json"), "utf-8")) as LibraryEntry[];
+const sample = JSON.parse(await fs.readFile(path.resolve(rootDir, "../../catalogs/classic/catalog.json"), "utf-8")) as LibraryEntry[];
 const libraryRoute = createLibraryRoute(process.env.MIDI_SOURCE_DIR, sample);
 
 const server = http.createServer(async (req, res) => {

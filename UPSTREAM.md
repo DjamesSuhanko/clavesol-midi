@@ -29,3 +29,7 @@ Checkpoint da Etapa 2: `69caf7f`. A ponte local de MIDI externo está documentad
 ## Etapa 3B
 
 Checkpoint anterior: `0a4d9fa`. Índice JSON de 18 entradas, módulo de rotas locais por ID reutilizando readMidi e painel independente que reutiliza startMidi/Manager.play. Integrações no servidor, HTML, CSS, entrada local e empacotamento do índice. Consulte ETAPA-3B.md para a lista de arquivos. Nenhuma alteração no núcleo do sintetizador/renderer ou nas dependências.
+
+## Integração estática e catálogo completo
+
+O servidor local lê catalogs/classic/catalog.json. O módulo static_mode.ts e pequenas condições nas entradas local_main/midi_library/midi_test_button alternam o transporte local/estático, preservando a interface e os componentes internos. scripts/preparar_publicacao.py empacota local-dev do build oficial com a SoundFont e a cópia versionada dos MIDIs. Ver PUBLICACAO.md.
