@@ -47,8 +47,12 @@ Gatilho exclusivo: **workflow_dispatch**. Pushes não publicam.
 
 No GitHub: Actions → Publicar Clave Sol MIDI → Run workflow → main. O workflow instala o lockfile oficial, usa Node da `.nvmrc`, compila, prepara dist e publica via Pages. Os workflows preservados dentro de vendor são apenas arquivos do fornecedor; GitHub só executa os workflows na pasta `.github/workflows` da raiz.
 
-O DNS da Cloudflare não é alterado por nenhum script. Para o domínio responder, o DNS deve apontar para o Pages; a situação de DNS/certificado depende da configuração existente. A opção Enforce HTTPS só poderá ser habilitada quando o GitHub emitir o certificado. O primeiro deploy permanece manual.
+O DNS da Cloudflare não é alterado por nenhum script. Para o domínio responder, o DNS deve apontar para o Pages; a situação de DNS/certificado depende da configuração existente. O script habilita Enforce HTTPS quando o certificado estiver aprovado. Nesta preparação, o GitHub informou certificado aprovado e HTTPS obrigatório foi habilitado. O primeiro deploy permanece manual.
 
 ## Verificação desta preparação
 
 Executado apenas `npm run build:pages` e conferência leve do empacotamento: 337 URLs locais válidas, arquivos distribuídos idênticos por SHA-256 aos originais, SoundFont presente, sem node_modules ou sourcemaps no artefato. Sem testes visuais, navegador ou suítes extensas. Não foi executado o workflow.
+
+## Estado remoto confirmado
+
+Repositório público criado e código enviado à main. Pages configurado com build_type=workflow e CNAME midi.clavesol.com.br. Certificado aprovado pelo GitHub; Enforce HTTPS habilitado. Consulta a Actions: zero execuções. Nenhuma mudança no DNS. O site só terá seu primeiro artefato publicado quando o proprietário executar Publicar Clave Sol MIDI manualmente.

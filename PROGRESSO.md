@@ -5,7 +5,10 @@
 - Build indispensável passou; 337 URLs/arquivos conferidos por hash. Sem navegador ou suítes extensas.
 - Workflow exclusivamente manual preparado: .github/workflows/publicar.yml.
 - Documentação: PUBLICACAO.md. DNS não alterado; workflow não executado.
-- Configuração/envio do remoto: próximo passo nesta execução.
+- Remoto público DjamesSuhanko/clavesol-midi criado; código enviado à main sem force.
+- Pages configurado via workflow e domínio midi.clavesol.com.br. Certificado aprovado e HTTPS obrigatório habilitado.
+- Actions confirmou zero execuções; primeiro deploy pendente de acionamento manual pelo proprietário.
+- Tarefa encerrada; nenhuma etapa posterior iniciada.
 
 ---
 

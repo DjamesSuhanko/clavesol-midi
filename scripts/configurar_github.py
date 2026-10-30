@@ -61,6 +61,9 @@ def main():
     if not pages: api('repos/' + REPO + '/pages', 'POST', {'build_type': 'workflow'})
     api('repos/' + REPO + '/pages', 'PUT', {'cname': DOMAIN, 'build_type': 'workflow'})
     state = api('repos/' + REPO + '/pages')
+    if (state.get('https_certificate') or {}).get('state') == 'approved' and not state.get('https_enforced'):
+        run(['gh', 'api', '--method', 'PUT', 'repos/' + REPO + '/pages', '-F', 'https_enforced=true'])
+        state = api('repos/' + REPO + '/pages')
     print(json.dumps({'repository': REPO, 'branch': 'main', 'build_type': state.get('build_type'), 'cname': state.get('cname'), 'https_enforced': state.get('https_enforced')}, indent=2))
     print('Workflow NÃO executado. DNS NÃO alterado.')
 
