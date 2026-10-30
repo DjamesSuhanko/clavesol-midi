@@ -2,6 +2,35 @@
 
 A biblioteca local passa a ler `catalogs/classic/catalog.json` (337 músicas), em vez de `vendor/spessasynth/library-sample.json`. A pesquisa, navegação, controles e visualização permanecem os existentes.
 
+
+## Categorias — Etapa 5
+
+A configuração pública `categories.json` cadastra apenas `classic` / **Clássicas** / `enabled: true`. As origens ficam separadas em `categories.local.json` (ignorado pelo Git), atualmente `{"classic": "/home/djames/Documents/MIDIS/Classic"}`. Nenhuma descoberta de acervos é feita. Somente IDs cadastrados e habilitados são gerados, servidos e publicados.
+
+A biblioteca apresenta **Clássicas (337) → compositor → subpastas → música**. Categorias e pastas podem ser recolhidas. A pesquisa continua sobre todas as músicas e abre os grupos com resultados, sem depender do estado recolhido. IDs, nomes, caminhos relativos e URLs de Clássicas foram preservados; apenas `categoryId` e `categoryName` foram acrescentados ao catálogo existente. Nenhum segundo catálogo-fonte foi criado.
+
+Atualizar somente Clássicas (comando anterior preservado):
+
+```bash
+MIDI_SOURCE_DIR=/home/djames/Documents/MIDIS/Classic python3 scripts/gerar_catalogo.py
+```
+
+Atualizar todas as categorias explicitamente habilitadas, usando suas origens locais:
+
+```bash
+env -u MIDI_SOURCE_DIR python3 scripts/gerar_catalogo.py --all
+python3 scripts/preparar_publicacao.py --sync-midis --sync-only
+npm run build:pages
+```
+
+Nesta etapa não foi executada nova sincronização dos originais: a publicação reutilizou os MIDIs já versionados. Ao adicionar arquivos futuramente, o comando de sincronização continua preparando a cópia de publicação, sem alterar a origem.
+
+**Exemplo futuro — não cadastrado agora:** para adicionar Infantil, acrescente `{"id":"infantil","name":"Infantil","enabled":true}` ao array de `categories.json` e informe `"infantil":"/caminho/especifico/do/acervo/infantil"` no objeto de `categories.local.json`. Gere com `python3 scripts/gerar_catalogo.py --collection infantil` (sem MIDI_SOURCE_DIR de outra categoria), ou use o comando `--all` acima; depois sincronize e compile. Isso produz `catalogs/infantil/` e cópias/URLs sob `public/collections/infantil/midis/` / `collections/infantil/midis/`. Clássicas permanece em `public/midis/` / `midis/`. Os namespaces dos IDs e das URLs evitam colisões entre nomes iguais de coleções distintas.
+
+Para desativar uma categoria, use `enabled:false`: ela deixa de participar da geração e da próxima distribuição, mesmo que cópias antigas ainda existam no repositório. Não são criadas categorias visíveis sem músicas.
+
+Versione a configuração pública, catálogos e cópias necessárias, nunca `categories.local.json`. O Actions usa somente esses arquivos versionados e o workflow atual permanece inalterado e manual. Não há diretórios locais no JSON publicado.
+
 ## Atualizar músicas
 
 ```bash

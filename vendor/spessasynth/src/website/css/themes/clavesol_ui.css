@@ -78,3 +78,9 @@ body.clavesol_player :is(
     [translate-path-description="locale.demoGithubPage"],
     [translate-path-description="locale.discord"]
 ) { display: none !important; }
+
+/* Category/folder disclosure adds hierarchy without changing song controls. */
+#library_list li.library_group { display: block; padding: 0.5rem 0; }
+#library_list .library_group ul { list-style: none; padding-left: 0.65rem; }
+#library_list summary { cursor: pointer; overflow-wrap: anywhere; padding: 0.5rem 0; }
+#library_list summary:focus-visible { outline: 2px solid var(--border-color); outline-offset: 2px; }

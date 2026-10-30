@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 SCRIPT = Path(__file__).resolve().parents[1] / 'scripts' / 'gerar_catalogo.py'
+sys.path.insert(0, str(SCRIPT.parent))
 spec = importlib.util.spec_from_file_location('catalog', SCRIPT)
 catalog = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(catalog)
@@ -88,9 +89,9 @@ class CatalogTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(SCRIPT), '--output-dir', str(self.root)], env=env, capture_output=True)
         self.assertNotEqual(result.returncode, 0)
         env.pop('MIDI_SOURCE_DIR')
-        result = subprocess.run([sys.executable, str(SCRIPT)], env=env, capture_output=True)
+        result = subprocess.run([sys.executable, str(SCRIPT), '--collection', 'not_registered'], env=env, capture_output=True)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn(b'MIDI_SOURCE_DIR', result.stderr)
+        self.assertIn(b'Categoria', result.stderr)
 
     def test_empty_and_invalid_source_or_collection(self):
         entries, summary = catalog.build_catalog(self.root)

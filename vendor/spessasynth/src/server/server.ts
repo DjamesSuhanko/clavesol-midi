@@ -35,8 +35,23 @@ const configManager = await LocalEditionConfig.initialize();
 
 const midiRoute = createMidiRoute(process.env.MIDI_SOURCE_DIR, process.env.MIDI_TEST_FILE);
 
-const sample = JSON.parse(await fs.readFile(path.resolve(rootDir, "../../catalogs/classic/catalog.json"), "utf-8")) as LibraryEntry[];
-const libraryRoute = createLibraryRoute(process.env.MIDI_SOURCE_DIR, sample);
+// Only the explicit public registry is loaded; never discover collection folders.
+const projectRoot = path.resolve(rootDir, "../..");
+const categories = JSON.parse(await fs.readFile(path.join(projectRoot, "categories.json"), "utf-8")) as { id: string; name: string; enabled: boolean }[];
+let categorySources: Record<string, string> = {};
+try {
+    categorySources = JSON.parse(await fs.readFile(path.join(projectRoot, "categories.local.json"), "utf-8")) as Record<string, string>;
+} catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+}
+const libraryEntries: LibraryEntry[] = [];
+for (const category of categories.filter((item) => item.enabled === true)) {
+    if (!/^[a-z0-9][a-z0-9_-]*$/.test(category.id)) throw new Error("Invalid category ID");
+    const entries = JSON.parse(await fs.readFile(path.join(projectRoot, "catalogs", category.id, "catalog.json"), "utf-8")) as LibraryEntry[];
+    libraryEntries.push(...entries.map((entry) => ({ ...entry, categoryId: category.id, categoryName: category.name })));
+}
+if (process.env.MIDI_SOURCE_DIR) categorySources.classic = process.env.MIDI_SOURCE_DIR;
+const libraryRoute = createLibraryRoute(process.env.MIDI_SOURCE_DIR, libraryEntries, categorySources);
 
 const server = http.createServer(async (req, res) => {
     if (!req.url) {

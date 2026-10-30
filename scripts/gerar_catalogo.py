@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import stat
 import tempfile
+from categories import enabled_categories, local_source
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -16,7 +17,7 @@ def sort_key(value):
     return value.casefold(), value
 
 
-def build_catalog(source, collection_id="classic"):
+def build_catalog(source, collection_id="classic", category_name=None):
     if not re.fullmatch(r"[a-z0-9][a-z0-9_-]*", collection_id):
         raise ValueError("Identificador de coleção inválido: use letras minúsculas, números, _ ou -.")
     source = Path(source).absolute()
@@ -62,6 +63,8 @@ def build_catalog(source, collection_id="classic"):
                 "fileName": name,
                 "sizeBytes": info.st_size,
                 "collectionId": collection_id,
+                "categoryId": collection_id,
+                "categoryName": category_name or collection_id,
             })
     entries.sort(key=lambda entry: sort_key(entry["relativePath"]))
     if len({entry["id"] for entry in entries}) != len(entries):
@@ -103,23 +106,30 @@ def main():
     parser.add_argument("--source", default=os.environ.get("MIDI_SOURCE_DIR"), help="Raiz externa; padrão: MIDI_SOURCE_DIR")
     parser.add_argument("--collection", default="classic", help="Namespace estável da coleção (padrão: classic)")
     parser.add_argument("--output-dir", type=Path, help="Destino; padrão: catalogs/<coleção> no projeto")
+    parser.add_argument("--all", action="store_true", help="Processa somente categorias cadastradas e habilitadas")
     args = parser.parse_args()
-    if not args.source:
-        parser.error("Configure MIDI_SOURCE_DIR ou forneça --source. Nenhuma busca foi executada.")
+    if args.all and (args.source or args.output_dir):
+        parser.error("Use --all sem MIDI_SOURCE_DIR/--source/--output-dir; origens vêm de categories.local.json.")
     try:
-        entries, summary = build_catalog(args.source, args.collection)
-        destination = args.output_dir or PROJECT_ROOT / "catalogs" / args.collection
-        root = Path(args.source).resolve()
-        resolved_destination = destination.resolve()
-        if resolved_destination == root or root in resolved_destination.parents:
-            raise ValueError("O destino deve ficar fora do acervo original.")
-        write_json(destination / "catalog.json", entries)
-        write_json(destination / "summary.json", summary)
+        categories = enabled_categories()
+        selected = categories if args.all else [c for c in categories if c['id'] == args.collection]
+        if not selected:
+            raise ValueError("Categoria não cadastrada ou desabilitada.")
+        for category in selected:
+            source = local_source(category['id'], args.source if not args.all else None)
+            entries, summary = build_catalog(source, category['id'], category['name'])
+            destination = args.output_dir or PROJECT_ROOT / "catalogs" / category['id']
+            root = Path(source).resolve()
+            resolved_destination = destination.resolve()
+            if resolved_destination == root or root in resolved_destination.parents:
+                raise ValueError("O destino deve ficar fora do acervo original.")
+            write_json(destination / "catalog.json", entries)
+            write_json(destination / "summary.json", summary)
+            print(f"{category['name']}: {summary['totalSongs']} músicas; {summary['composerCount']} compositores; {summary['totalSizeBytes']} bytes.")
+            print(f"Catálogo: {destination / 'catalog.json'}")
     except (OSError, ValueError) as error:
         parser.exit(1, f"Erro: {error}\n")
-    print(f"{summary['totalSongs']} músicas; {summary['composerCount']} compositores; {summary['totalSizeBytes']} bytes.")
-    print(f"Catálogo: {destination / 'catalog.json'}")
-    print(f"Resumo: {destination / 'summary.json'}")
+
 
 
 if __name__ == "__main__":

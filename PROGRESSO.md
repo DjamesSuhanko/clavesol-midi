@@ -1,3 +1,17 @@
+# Etapa 5 — categorias concluídas
+
+- Somente classic/Clássicas habilitada em categories.json; origem explícita em categories.local.json (ignorado pelo Git).
+- Acesso externo limitado a /home/djames/Documents/MIDIS/Classic. Nenhum diretório irmão examinado, nenhum original copiado ou modificado nesta etapa.
+- Gerador e empacotador usam o cadastro explícito; Actions continua independente das origens locais e o workflow não mudou.
+- UI organiza categoria/compositor/subpastas; pesquisa abre resultados em grupos recolhidos. Player, SoundFont e personalizações recentes não alterados.
+- Conferidos: 337 IDs, nomes, hierarquias e URLs atuais preservados; categorias desabilitadas excluídas; namespaces futuros isolados; sem caminhos locais no JSON público.
+- Build estático aprovado; 5 testes do gerador e 2 testes de rotas da biblioteca aprovados. Sem navegador/suítes extensas.
+- Documentação breve em PUBLICACAO.md/README.md, incluindo exemplo futuro Infantil (não cadastrado).
+- Arquivo local corrigir_clavesol_midi.py preservado sem alteração e sem inclusão no commit.
+- Commit/push em main sem force; workflow não executado. Verificação visual ficará com o proprietário. Nenhuma outra etapa iniciada.
+
+---
+
 # Correções de interface e inicialização — concluídas
 
 - Causa confirmada por HTTP na publicação: Content-Length do gzip menor que os bytes descomprimidos; buffer fixo causava RangeError sem tratamento.

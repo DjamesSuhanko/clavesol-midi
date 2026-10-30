@@ -2,6 +2,10 @@
 
 SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Biblioteca integrada ao catálogo completo de 337 músicas e 26 compositores. Veja ETAPA-2.md para os temas e ETAPA-3B.md para a biblioteca.
 
+## Categorias
+
+A biblioteca está organizada em **Clássicas → compositor → subpastas → música**. O cadastro fica em `categories.json`; as origens locais em `categories.local.json`, ignorado pelo Git. Consulte a seção Categorias de `PUBLICACAO.md` para adicionar uma coleção por configuração. Pesquisa, reprodução e download permanecem os existentes.
+
 ## Publicação estática
 
 Consulte `PUBLICACAO.md` para atualizar os MIDIs, preparar `dist/` e publicar manualmente. `npm run build:pages` usa o build oficial e somente arquivos versionados. O workflow `.github/workflows/publicar.yml` possui exclusivamente `workflow_dispatch`; nenhum push inicia publicação.

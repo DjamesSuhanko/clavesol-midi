@@ -8,11 +8,10 @@ from pathlib import Path, PurePosixPath
 import shutil
 import tempfile
 from urllib.parse import quote
+from categories import enabled_categories, local_source, midi_prefix
 
 ROOT = Path(__file__).resolve().parent.parent
 VENDOR = ROOT / 'vendor/spessasynth'
-CATALOG = ROOT / 'catalogs/classic/catalog.json'
-PUBLIC = ROOT / 'public/midis'
 DIST = ROOT / 'dist'
 
 
@@ -96,34 +95,40 @@ def main():
     parser.add_argument('--source', default=os.environ.get('MIDI_SOURCE_DIR'))
     parser.add_argument('--sync-only', action='store_true', help='Somente sincronização; não requer build')
     args = parser.parse_args()
-    entries = json.loads(CATALOG.read_text(encoding='utf-8'))
-    if not entries or len({e['relativePath'] for e in entries}) != len(entries):
-        raise ValueError('Catálogo vazio ou com caminhos duplicados.')
+    categories = enabled_categories()
+    entries = []
+    for category in categories:
+        catalog = ROOT / 'catalogs' / category['id'] / 'catalog.json'
+        values = json.loads(catalog.read_text(encoding='utf-8'))
+        entries.extend({**e, 'categoryId': category['id'], 'categoryName': category['name']} for e in values)
+    if not entries or len({e['id'] for e in entries}) != len(entries):
+        raise ValueError('Catálogo vazio ou com IDs duplicados.')
     if args.sync_only and not args.sync_midis:
         parser.error('--sync-only requer --sync-midis')
     (ROOT / 'work').mkdir(exist_ok=True)
     if args.sync_midis:
-        if not args.source:
-            parser.error('Configure MIDI_SOURCE_DIR ou --source para sincronizar.')
-        source = Path(args.source).resolve(strict=True)
-        if source == ROOT or source.is_relative_to(ROOT) or ROOT.is_relative_to(source):
-            raise ValueError('Use um acervo externo ao projeto para sincronizar.')
-        with tempfile.TemporaryDirectory(dir=ROOT / 'work') as temporary:
-            staged = Path(temporary) / 'midis'; staged.mkdir()
-            for entry in entries:
-                src = midi_path(source, entry['relativePath'])
-                data = src.read_bytes()
-                if len(data) != entry['sizeBytes']:
-                    raise ValueError('Tamanho mudou; regenere o catálogo: ' + entry['relativePath'])
-                target = staged / entry['relativePath']; target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(data)
-                if hashlib.sha256(src.read_bytes()).digest() != hashlib.sha256(target.read_bytes()).digest():
-                    raise ValueError('Arquivo mudou durante a cópia: ' + entry['relativePath'])
-            PUBLIC.parent.mkdir(exist_ok=True)
-            if PUBLIC.is_symlink(): raise ValueError('Destino public/midis é um link.')
-            if PUBLIC.exists(): shutil.rmtree(PUBLIC)
-            shutil.move(staged, PUBLIC)
-        print(f'{len(entries)} MIDIs sincronizados para public/midis; originais intactos.')
+        for category in categories:
+            category_entries = [e for e in entries if e['categoryId'] == category['id']]
+            source = Path(local_source(category['id'], args.source if category['id'] == 'classic' else None)).resolve(strict=True)
+            if source == ROOT or source.is_relative_to(ROOT) or ROOT.is_relative_to(source):
+                raise ValueError('Use um acervo externo ao projeto para sincronizar.')
+            public = ROOT / 'public' / midi_prefix(category['id'])
+            with tempfile.TemporaryDirectory(dir=ROOT / 'work') as temporary:
+                staged = Path(temporary) / 'midis'; staged.mkdir()
+                for entry in category_entries:
+                    src = midi_path(source, entry['relativePath'])
+                    data = src.read_bytes()
+                    if len(data) != entry['sizeBytes']:
+                        raise ValueError('Tamanho mudou; regenere o catálogo: ' + entry['relativePath'])
+                    target = staged / entry['relativePath']; target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(data)
+                    if hashlib.sha256(src.read_bytes()).digest() != hashlib.sha256(target.read_bytes()).digest():
+                        raise ValueError('Arquivo mudou durante a cópia: ' + entry['relativePath'])
+                public.parent.mkdir(parents=True, exist_ok=True)
+                if public.is_symlink(): raise ValueError('Destino público é um link.')
+                if public.exists(): shutil.rmtree(public)
+                shutil.move(staged, public)
+            print(f"{category['name']}: {len(category_entries)} MIDIs sincronizados; originais intactos.")
     if args.sync_only:
         return
     build = VENDOR / 'local-dev'
@@ -142,11 +147,12 @@ def main():
         (output / 'index.html').write_text(html)
         library = []
         for entry in entries:
-            source = midi_path(PUBLIC.resolve(strict=True), entry['relativePath'])
+            prefix = midi_prefix(entry['categoryId'])
+            source = midi_path((ROOT / 'public' / prefix).resolve(strict=True), entry['relativePath'])
             if source.stat().st_size != entry['sizeBytes']: raise ValueError('Cópia versionada desatualizada: ' + entry['relativePath'])
-            target = output / 'midis' / entry['relativePath']; target.parent.mkdir(parents=True, exist_ok=True)
+            target = output / prefix / entry['relativePath']; target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, target)
-            url = 'midis/' + quote(entry['relativePath'], safe='/')
+            url = prefix.as_posix() + '/' + quote(entry['relativePath'], safe='/')
             library.append({**entry, 'url': url, 'downloadUrl': url})
         write_json(output / 'library.json', library)
         test = next((e for e in library if e['relativePath'] == 'Borodin/bor_ps2.mid'), library[0])

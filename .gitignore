@@ -39,3 +39,8 @@ __pycache__/
 /dist/
 !/public/midis/**/*.mid
 !/public/midis/**/*.midi
+
+# Explicit local category roots never belong to the public JSON or repository.
+/categories.local.json
+!/public/collections/**/*.mid
+!/public/collections/**/*.midi
