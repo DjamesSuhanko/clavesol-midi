@@ -1,9 +1,9 @@
+import { readSoundFont } from "./soundfont_download.ts";
 import { staticMode, readStaticSettings, saveStaticSettings } from "./static_mode.ts";
 import { installMidiLibrary } from "./midi_library.ts";
 import { installMidiTestButton } from "./midi_test_button.ts";
 import type { MIDIFile } from "../utils/drop_file_handler.ts";
 import { Manager } from "../manager/manager.js";
-import { showNotification } from "../notification/notification.js";
 import { LocaleManager } from "../manager/locale_manager.js";
 import type { LocaleCode } from "../../locale/locale_list.ts";
 import type { SavedSettings } from "../../../server/saved_settings.ts";
@@ -27,6 +27,24 @@ declare global {
  * purpose: main script for the local edition, loads the soundfont and passes it to the manager.js, reloads soundfonts when needed and saves the settings
  */
 
+function showStartupError(error: unknown) {
+    console.error("Falha ao inicializar o player:", error);
+    const title = document.querySelector<HTMLElement>("#title");
+    title?.removeAttribute("translate-path");
+    if (title) title.textContent = "Não foi possível carregar a SoundFont ou iniciar o sintetizador. Verifique a conexão e recarregue a página.";
+    document.querySelector("#progress_bar")?.classList.remove("active", "indeterminate");
+}
+
+async function withInitializationTimeout<T>(task: Promise<T>): Promise<T> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+        return await Promise.race([task, new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error("Tempo limite ao iniciar o sintetizador.")), 60_000);
+        })]);
+    } finally { clearTimeout(timer); }
+}
+
+async function initializePlayer() {
 // Init params
 /**
  * Saves the settings (settings.js) selected data to config.json
@@ -65,12 +83,13 @@ const exportButton =
 
 // Remove the old files
 fileInput.value = "";
-fileInput.focus();
+// Hidden upload remains available to upstream code; do not focus it.
 
 let synthReady = false;
 
 // Load version
-const v = await fetch(staticMode ? "version.txt" : "/getversion");
+const v = await fetch(staticMode ? "version.txt" : "/getversion", { signal: AbortSignal.timeout(30_000) });
+if (!v.ok) throw new Error(`Versão indisponível (HTTP ${v.status}).`);
 window.SPESSASYNTH_VERSION = await v.text();
 
 let soundBankBufferCurrent: ArrayBuffer | undefined = undefined;
@@ -92,54 +111,18 @@ try {
 
 let titleString = "TITLE STRING";
 
-async function fetchFont(
-    fileName: string,
-    callback: (arg0: number) => unknown
-): Promise<ArrayBuffer> {
-    const response = await fetch(staticMode ? `soundfonts/${encodeURIComponent(fileName)}` : fileName);
-    if (!response.ok || !response.body) {
-        titleMessage.textContent = "Error downloading soundfont!";
-        throw new Error(response.statusText);
-    }
-    const size = Number.parseInt(response.headers.get("content-length") ?? "0");
-    const reader = response.body.getReader();
-    let done;
-    let dataArray;
-    try {
-        dataArray = new Uint8Array(size);
-    } catch (error) {
-        let message = `Your browser ran out of memory. Consider using Firefox or SF3 soundfont instead<br><br> (see console for error)`;
-        if (window.manager) {
-            message = window.manager.localeManager.getLocaleString(
-                "locale.warnings.outOfMemory"
-            );
-        }
-        showNotification("Warning", [
-            {
-                type: "text",
-                textContent: message
-            }
-        ]);
-        throw error;
-    }
-    let offset = 0;
-    do {
-        const readData = await reader.read();
-        if (readData.value) {
-            dataArray.set(readData.value, offset);
-            offset += readData.value.length;
-        }
-        done = readData.done;
-        const percent = Math.round((offset / size) * 100);
-        callback(percent);
-    } while (!done);
-    return dataArray.buffer;
+async function fetchFont(fileName: string): Promise<ArrayBuffer> {
+    const url = staticMode ? new URL(`soundfonts/${encodeURIComponent(fileName)}`, document.baseURI).href : fileName;
+    const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
+    return await readSoundFont(response, (percent) => {
+        progressBar.classList.toggle("indeterminate", percent === undefined);
+        if (percent !== undefined) progressBar.style.setProperty("--progress", `${percent / 100}`);
+    });
 }
 
 async function startMidi(midiFiles: FileList | File[]) {
     if (!synthReady || !window.manager) {
-        setTimeout(() => void startMidi(midiFiles), 100);
-        return;
+        throw new Error("O sintetizador ainda não está pronto. Recarregue a página se o erro persistir.");
     }
     const manager = window.manager;
     await manager.ready;
@@ -166,14 +149,16 @@ async function startMidi(midiFiles: FileList | File[]) {
     exportButton.style.display = "flex";
 }
 
-const initManagerSF = async () => {
+let initialization: Promise<void> | undefined;
+const initManagerSF = () => initialization ??= initializeManagerSF();
+const initializeManagerSF = async () => {
     if (!soundBankBufferCurrent) {
         return;
     }
     titleMessage.textContent = "Initializing...";
     progressBar.classList.add("active", "indeterminate");
     if (window.manager) {
-        await window.manager.reloadSf(soundBankBufferCurrent);
+        await withInitializationTimeout(window.manager.reloadSf(soundBankBufferCurrent));
     } else {
         window.manager = new Manager(
             context,
@@ -184,7 +169,7 @@ const initManagerSF = async () => {
         // Override temporarily
         titleMessage.textContent = "Initializing...";
 
-        await window.manager.ready;
+        await withInitializationTimeout(window.manager.ready);
         // Disabled as of 20-11-2025 (firefox regression, lags a lot with console)
         window.manager.synth?.setLogLevel(false, false, false);
     }
@@ -205,46 +190,22 @@ async function replaceFont(fontName: string) {
     titleMessage.textContent = "Loading soundfont...";
     progressBar.style.setProperty("--progress", "0");
     progressBar.classList.add("active");
-    const data = await fetchFont(fontName, (percent) => {
-        progressBar.style.setProperty("--progress", `${percent / 100}`);
-        console.info(`Loading sound bank: ${percent}%`);
-    });
-
-    titleMessage.textContent = "Parsing soundfont...";
-    soundBankBufferCurrent = data;
-    // Prompt the user to click if needed
-    if (context.state === "suspended") {
-        progressBar.classList.remove("active");
-        titleMessage.textContent = "Press anywhere to start the app";
-        return;
-    }
-
-    if (!soundBankBufferCurrent) {
-        return;
-    }
+    soundBankBufferCurrent = await fetchFont(fontName);
+    titleMessage.textContent = "Inicializando sintetizador…";
+    // SoundFont parsing/initialization does not require audible autoplay.
+    // The original Manager resumes audio on a later user gesture when required.
+    initialization = undefined;
     await initManagerSF();
     synthReady = true;
     titleMessage.textContent = titleString;
 }
-
-// eslint-disable-next-line unicorn/prefer-add-event-listener
-document.onclick = async () => {
-    if (!soundBankBufferCurrent) {
-        return;
-    }
-    // User has clicked, we can create the js
-    await context.resume();
-    // eslint-disable-next-line unicorn/prefer-add-event-listener
-    document.onclick = null;
-    await initManagerSF();
-};
 
 const localeManager = new LocaleManager(
     navigator.language.split("-")[0].toLowerCase() as LocaleCode
 );
 
 // Load the list of soundfonts
-const r = await fetch(staticMode ? "soundfonts.json" : "soundfonts");
+const r = await fetch(staticMode ? "soundfonts.json" : "soundfonts", { signal: AbortSignal.timeout(30_000) });
 
 if (!r.ok) {
     titleMessage.textContent = "Error fetching soundfonts!";
@@ -252,11 +213,11 @@ if (!r.ok) {
 }
 const sfSelector = document.querySelector<HTMLSelectElement>("#sf_selector")!;
 
-const soundBanks: { name: string; size: number }[] = JSON.parse(
+const soundBanks: { name: string; size?: number }[] = JSON.parse(
     await r.text()
-) as { name: string; size: number }[];
+) as { name: string; size?: number }[];
 
-if (!(0 in soundBanks)) {
+if (!Array.isArray(soundBanks) || !soundBanks.length || soundBanks.some((sf) => typeof sf.name !== "string" || !sf.name)) {
     titleMessage.textContent = "No files in the 'soundfonts' folder!";
     throw new Error("No sound banks exist in the folder");
 }
@@ -278,7 +239,8 @@ sfSelector.addEventListener("change", async () => {
     if (window.manager?.seq?.midiData) {
         window.manager.seq.pause();
     }
-    await replaceFont(sfSelector.value);
+    try { await replaceFont(sfSelector.value); }
+    catch (error) { showStartupError(error); return; }
     titleMessage.textContent = window.manager?.seqUI?.currentSongTitle
         ? window.manager.seqUI?.currentSongTitle || titleString
         : titleString;
@@ -317,7 +279,14 @@ const prepareExternalMidi = async () => {
     await context.resume();
     // eslint-disable-next-line unicorn/prefer-add-event-listener
     document.onclick = null;
-    if (!synthReady) await initManagerSF();
+    if (!synthReady) {
+        try { await initManagerSF(); }
+        catch (error) { showStartupError(error); throw error; }
+    }
 };
 installMidiTestButton(loadExternalMidi, prepareExternalMidi);
 installMidiLibrary(loadExternalMidi, prepareExternalMidi);
+
+}
+
+void initializePlayer().catch(showStartupError);

@@ -1,3 +1,13 @@
+# Correções de interface e inicialização — concluídas
+
+- Causa confirmada por HTTP na publicação: Content-Length do gzip menor que os bytes descomprimidos; buffer fixo causava RangeError sem tratamento.
+- Leitura corrigida por chunks reais; erros/rejeições e timeouts tratados; banco e inicialização nativa automáticos.
+- Componentes solicitados ocultos por CSS no player Clave Sol, sem remover hooks/DOM nem síntese/exportação.
+- Distribuição dist reconstruída; validação HTTP gzip/sem tamanho/erro e decoder SF3 feita sem navegador. Biblioteca preservada com 337 músicas.
+- Detalhes em PUBLICACAO.md. Commit/push desta correção; workflow não executado.
+
+---
+
 # Catálogo completo e preparação de publicação
 
 - Biblioteca local integrada ao catálogo de 337 músicas.

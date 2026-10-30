@@ -56,3 +56,15 @@ Executado apenas `npm run build:pages` e conferência leve do empacotamento: 337
 ## Estado remoto confirmado
 
 Repositório público criado e código enviado à main. Pages configurado com build_type=workflow e CNAME midi.clavesol.com.br. Certificado aprovado pelo GitHub; Enforce HTTPS habilitado. Consulta a Actions: zero execuções. Nenhuma mudança no DNS. O site só terá seu primeiro artefato publicado quando o proprietário executar Publicar Clave Sol MIDI manualmente.
+
+## Correção da inicialização e limpeza da interface
+
+A resposta publicada de GeneralUserGS.sf3 chega com `Content-Encoding: gzip`: o Content-Length observado era 4.825.200 bytes, enquanto o fetch descomprimido entrega 8.423.728 bytes. O leitor anterior pré-alocava pelo cabeçalho e lançava RangeError ao preencher o buffer; a rejeição não tratada interrompia a instalação dos controles e deixava Loading soundfont na tela.
+
+`soundfont_download.ts` agora acumula os chunks recebidos, dimensionando o buffer pelo tamanho real. Content-Length só orienta o progresso quando não há compressão; com tamanho desconhecido o indicador é indeterminado. A URL continua soundfonts/GeneralUserGS.sf3 e o manifesto continua um array de objetos com name, ambos corretos. O decoder WASM/Vorbis já está incorporado em worker.js e spessasynth_processor.min.js: não faltava um arquivo externo.
+
+O bootstrap aguarda a inicialização nativa automaticamente, mesmo com AudioContext suspenso, sem exigir clique para baixar/preparar o banco. A saída audível continua sujeita à política do navegador e é liberada pelo gesto normal de Ouvir. A barra só sai após manager.ready; falhas/rejeições/timeouts mostram orientação de erro em português. Nenhum mecanismo de síntese foi substituído.
+
+A classe clavesol_player oculta via CSS upload, seletor e botão extra de SoundFont, links GitHub/Discord e botão/status temporários de teste. DOM e mecanismos internos permanecem presentes; biblioteca e exportação não são ocultadas.
+
+Validação sem navegador: build:pages concluído; leitura gzip servindo o arquivo de dist com igualdade de bytes; ausência de Content-Length e erro HTTP tratados; primeira amostra SF3 decodificada pelo decoder original (13.847 frames); presença do WASM em ambos os backends; catálogo com 337 músicas. Sem suítes extensas ou teste visual. O workflow permanece manual e não foi executado pelo agente.

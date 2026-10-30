@@ -70,3 +70,11 @@
 #midi_library button:hover, #midi_library a:hover, #library_toggle:hover { background: var(--track-color); }
 #midi_library button:disabled { opacity: 0.6; cursor: wait; }
 @media (max-width: 700px) { #midi_library { width: 100%; } }
+
+/* Clave Sol library is the primary entry; retain DOM/hooks for the full engine. */
+body.clavesol_player :is(
+    #file_upload, #midi_file_input, #sf_selector, #extra_bank_button,
+    #midi_test_button, #midi_test_status,
+    [translate-path-description="locale.demoGithubPage"],
+    [translate-path-description="locale.discord"]
+) { display: none !important; }
