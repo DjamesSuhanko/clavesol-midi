@@ -1,6 +1,8 @@
 [
   { "id": "classic", "name": "Clássicas", "enabled": true },
   { "id": "infantil","name": "Infantil",  "enabled": true },
-  { "id": "adventista","name": "Adventista",  "enabled": true }
+  { "id": "adventista","name": "Adventista",  "enabled": true },
+  { "id": "musicacrista","name": "Música Cristã",  "enabled": true },
+  { "id": "novocantico","name": "Novo Cântico",  "enabled": true }
 
 ]
