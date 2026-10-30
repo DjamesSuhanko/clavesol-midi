@@ -6,11 +6,11 @@ Commit: **1f95f3a737592fb78db9504a0152465f3d60c5d3**
 
 Importado com `git archive` em `vendor/spessasynth`, sem submódulo nem `.git` aninhado. O package-lock.json original foi preservado; instale com npm ci, nunca resolvendo novamente os seletores latest do package.json.
 
-A única alteração no código oficial está em `vendor/spessasynth/src/server/server.ts`, marcada com comentários Clave Sol:
+Na Etapa 1, a única alteração no código oficial estava em `vendor/spessasynth/src/server/server.ts`, marcada com comentários Clave Sol:
 - SPESSASYNTH_HOST permite usar 127.0.0.1 no comando da raiz.
 - SPESSASYNTH_AUTO_UPDATE=0 evita que o atualizador oficial substitua a versão fixada. O atualizador permanece no código.
 
-Todos os demais arquivos importados, inclusive licença Apache 2.0, README, atribuições, interface, sintetizador, mixer, efeitos, visualizações e exportações, foram preservados byte a byte. Não houve personalização visual.
+No checkpoint da Etapa 1, todos os demais arquivos importados, inclusive licença Apache 2.0, README, atribuições, interface, sintetizador, mixer, efeitos, visualizações e exportações, foram preservados byte a byte. A Etapa 2 adiciona os temas descritos em ETAPA-2.md, mantendo os componentes funcionais.
 
 ## Demonstração e SoundFont
 

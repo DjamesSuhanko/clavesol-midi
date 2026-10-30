@@ -1,0 +1,29 @@
+/* Scoped presentation only: retain upstream layouts, canvas and controls. */
+:root[data-theme^="clavesol_"] {
+    --primary-border-radius: 4px;
+}
+:root[data-theme^="clavesol_"] * {
+    font-family: "DM Sans", system-ui, sans-serif;
+}
+:root[data-theme^="clavesol_"] :is(.monospaced, pre) {
+    font-family: "JetBrains Mono", monospace;
+}
+:root[data-theme^="clavesol_"] :is(h1, h2, #title) {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 500;
+    text-shadow: none;
+}
+:root[data-theme^="clavesol_"] .top_part {
+    --top-part-border-radius: 4px;
+    border-bottom: 1px solid var(--edge-color);
+}
+:root[data-theme^="clavesol_"] :is(button, select, input) {
+    border-radius: 4px;
+}
+:root[data-theme^="clavesol_"] :focus-visible {
+    outline: 3px solid #b67a30;
+    outline-offset: 3px;
+}
+:root[data-theme^="clavesol_"] #note_progress_background {
+    font-variant-numeric: tabular-nums;
+}

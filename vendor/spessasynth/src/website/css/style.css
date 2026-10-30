@@ -8,6 +8,8 @@
 @import "top_part.css";
 @import "keyboard_canvas_wrapper.css";
 @import "themes/themes.css";
+@import "themes/clavesol_fonts.css";
+@import "themes/clavesol_ui.css";
 
 :root {
     /*global variables*/

@@ -1,6 +1,6 @@
-# Clave Sol MIDI — Etapa 1
+# Clave Sol MIDI — Etapas 1 e 2
 
-SpessaSynth Web App **completo**, edição local original, preparado para futura personalização. Sem catálogo ou alterações visuais nesta etapa.
+SpessaSynth Web App **completo**, com temas Clave Sol claro e escuro. Sem catálogo. Veja ETAPA-2.md para alterações e validação visual.
 
 ## Versão e requisitos
 
@@ -50,7 +50,7 @@ Resultados nesta entrega:
 1. Carregue a demonstração e ouça alguns segundos; confirme áudio, notas em movimento e teclas iluminadas.
 2. Pause/retome com espaço; experimente volume, posição e velocidade nos controles inferiores.
 3. Abra Synthesizer controller: confira canais/instrumentos e efeitos; teste mute/solo ou um instrumento, se desejar.
-4. Em Settings, confira Show notes, Show active notes, teclado e visualização. As configurações são as originais.
+4. Em Settings, confira Show notes, Show active notes, teclado e visualização. Os controles são os originais; os temas Clave Sol estão em Settings → Theme.
 5. Opcional: em Export File, exporte WAV/MIDI e confira o arquivo. Vídeo, dispositivos MIDI físicos e todas as combinações de efeitos não foram testados nesta etapa.
 
 Não é necessário aguardar os 2min33s da música para validar a demonstração.
@@ -63,4 +63,4 @@ Não é necessário aguardar os 2min33s da música para validar a demonstração
 - `.nvmrc`, `.gitignore`, `UPSTREAM.md` e este README.
 - Gerados localmente, ignorados pelo Git: `vendor/spessasynth/node_modules/`, `dist/`, `local-dev/`, `server/` e caches de compilação. O `server/config.json` contém preferências locais.
 
-A licença e atribuições originais permanecem em `vendor/spessasynth/LICENSE`, README e fontes. Consulte `UPSTREAM.md` para procedência e as duas adaptações de execução do servidor. O repositório Clave Sol e seus templates não foram modificados. Não houve publicação, configuração de domínio ou implementação da etapa 2.
+A licença e atribuições originais permanecem em `vendor/spessasynth/LICENSE`, README e fontes. Consulte `UPSTREAM.md` para procedência e as duas adaptações de execução do servidor. O repositório Clave Sol e seus templates não foram modificados. Não houve publicação, configuração de domínio ou implementação de catálogo.

@@ -15,6 +15,9 @@ export interface ThemeInfo {
 }
 
 export const themeList = {
+    // Both use a dark musical canvas; preserve native active-note highlighting.
+    clavesol_dark: { name: "Clave Sol — Escuro", type: "dark" },
+    clavesol_light: { name: "Clave Sol — Claro", type: "dark" },
     spessasynth_dark: { name: "SpessaSynth Dark", type: "dark" },
     spessasynth_light: { name: "SpessaSynth Light", type: "light" },
     teal: { name: "Teal", type: "dark" },
@@ -32,4 +35,4 @@ export const themeList = {
 
 export type ThemeID = keyof typeof themeList;
 
-export const DEFAULT_THEME: ThemeID = "spessasynth_dark";
+export const DEFAULT_THEME: ThemeID = "clavesol_light";
